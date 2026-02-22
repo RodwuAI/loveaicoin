@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAC项目甘特图 - 2/20-3/2</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=PingFang+SC:wght@300;400;500;600&display=swap');
+        
+        body {
+            font-family: 'PingFang SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8f9fa;
+            font-size: 12px;
+        }
+        
+        .gantt-container {
+            width: 420mm;
+            height: 297mm;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+        
+        .header p {
+            font-size: 14px;
+            color: #666;
+            margin: 5px 0 0 0;
+        }
+        
+        .gantt-chart {
+            display: flex;
+            width: 100%;
+            height: calc(100% - 120px);
+        }
+        
+        .task-labels {
+            width: 280px;
+            border-right: 2px solid #ddd;
+            padding-right: 15px;
+        }
+        
+        .timeline-area {
+            flex: 1;
+            position: relative;
+            padding-left: 15px;
+        }
+        
+        .timeline-header {
+            height: 40px;
+            border-bottom: 2px solid #ddd;
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            margin-bottom: 10px;
+        }
+        
+        .date-cell {
+            flex: 1;
+            text-align: center;
+            font-weight: 600;
+            font-size: 11px;
+            border-right: 1px solid #ddd;
+            padding: 5px;
+        }
+        
+        .date-cell.weekend {
+            background: #ffe6e6;
+        }
+        
+        .date-cell.today {
+            background: #fff3cd;
+            font-weight: bold;
+        }
+        
+        .date-cell.launch {
+            background: #ffebee;
+            color: #c62828;
+            font-weight: bold;
+        }
+        
+        .task-group {
+            margin-bottom: 15px;
+        }
+        
+        .group-header {
+            height: 35px;
+            background: #2c3e50;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            font-weight: 600;
+            font-size: 14px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        
+        .task-row {
+            height: 32px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            position: relative;
+        }
+        
+        .task-label {
+            width: 280px;
+            padding: 8px 12px;
+            font-size: 11px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .task-label.ceo {
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .task-label.critical {
+            border-left: 4px solid #f44336;
+            font-weight: 600;
+        }
+        
+        .task-timeline {
+            flex: 1;
+            height: 100%;
+            position: relative;
+            display: flex;
+            padding-left: 15px;
+        }
+        
+        .timeline-grid {
+            position: absolute;
+            top: 0;
+            left: 15px;
+            right: 0;
+            height: 100%;
+            display: flex;
+        }
+        
+        .grid-cell {
+            flex: 1;
+            border-right: 1px solid #f0f0f0;
+            height: 100%;
+        }
+        
+        .task-bar {
+            position: absolute;
+            height: 20px;
+            top: 6px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 500;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            z-index: 2;
+        }
+        
+        .task-bar.completed {
+            background: linear-gradient(45deg, #4caf50, #66bb6a);
+        }
+        
+        .task-bar.in-progress {
+            background: linear-gradient(45deg, #ff9800, #ffb74d);
+        }
+        
+        .task-bar.pending {
+            background: linear-gradient(45deg, #2196f3, #64b5f6);
+        }
+        
+        .task-bar.ceo {
+            background: linear-gradient(45deg, #ffc107, #ffdb4d);
+            color: #333;
+        }
+        
+        .task-bar.critical {
+            border: 3px solid #f44336;
+            box-shadow: 0 0 10px rgba(244, 67, 54, 0.3);
+        }
+        
+        .launch-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: repeating-linear-gradient(
+                to bottom,
+                #f44336 0px,
+                #f44336 5px,
+                transparent 5px,
+                transparent 10px
+            );
+            z-index: 10;
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .legend h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 5px;
+            font-size: 11px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 12px;
+            border-radius: 6px;
+        }
+        
+        .status-summary {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            font-size: 11px;
+        }
+        
+        .emoji {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="gantt-container">
+        <div class="header">
+            <h1>LAC项目甘特图 📊</h1>
+            <p>时间线: 2026年2月20日 - 3月2日 | 关键里程碑：3/2正式上线🚀</p>
+        </div>
+        
+        <div class="status-summary">
+            <h3>进度概览</h3>
+            <div style="margin-bottom: 10px;">
+                <div>学生链路: 13/15 ✅</div>
+                <div>老师链路: 7/9 ⚠️</div>
+                <div>公益链路: 3/5 ⚠️</div>
+                <div>创业者链路: 1/5 🔵</div>
+            </div>
+            <div style="border-top: 1px solid #eee; padding-top: 8px;">
+                <strong>今日重点：全站QA</strong>
+            </div>
+        </div>
+        
+        <div class="gantt-chart">
+            <div class="task-labels">
+                <div class="timeline-header" style="height: 40px; display: flex; align-items: center; background: #2c3e50; color: white; border-radius: 4px; margin-bottom: 10px;">
+                    <span style="padding-left: 15px; font-weight: 600;">任务列表</span>
+                </div>
+                
+                <!-- CEO任务组 -->
+                <div class="task-group">
+                    <div class="group-header">CEO任务 👑</div>
+                    <div class="task-row">
+                        <div class="task-label ceo">
+                            <span class="emoji">📱</span>
+                            <span>社交账号注册(X/TG/Discord)</span>
+                        </div>
+                    </div>
+                    <div class="task-row">
+                        <div class="task-label ceo">
+                            <span class="emoji">👻</span>
+                            <span>创建Phantom钱包</span>
+                        </div>
+                    </div>
+                    <div class="task-row">
+                        <div class="task-label ceo">
+                            <span class="emoji">📅</span>
+                            <span>TGE日期决策</span>
+                        </div>
+                    </div>
+                    <div class="task-row">
+                        <div class="task-label ceo">
+                            <span class="emoji">📋</span>
+                            <span>审核mining logic PDF</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 核心开发任务组 -->
+                <div class="task-group">
+                    <div class="group-header">核心开发 🚀</div>
+                    <div class="task-row">
+                        <div class="task-label critical">
+                            <span class="emoji">🔧</span>
+                            <span>项目启动&基础设施</span>
+                        </div>
+                    </div>
+                    <div class="task-row">
+                        <div class="task-label critical">
+                            <span class="emoji">📱</span>
+                            <span>前端30+页面开发</span>
+                        </div>
+                    </div>
+                    <div class="task-row">
+                        <div class="task-label critical">
+                            <span class="emoji">🗄️</span>
+                            <span>后端数据库&API</span>
+                        </div>
+                    </div>
+                    <div class="task-row">
+                        <div class="task-label critical">
+                            <span class="emoji">🧪</span>
+                            <span>全站QA&用户链路验证</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 用户功能组 -->
+                <div class="task-group">
+                    <div class="group-header">用户功能 👥</div>
+                    <div class="task-row">
+                        <div class="task-label">
+                            <span class="emoji">🎓</span>
+                            <span>学生链路(注册/学习/挖矿)</span>
+                        </div>
+                    </div>
+                    <div class="task-row">
+                        <div class="task-label">
+                            <span class="emoji">👨‍🏫</span>
+                            <span>老师链路(教学/奖励)</span>
+                        </div>
+                    </div>
+                    <div class="task-row">
+                        <div class="task-label">
+                            <span class="emoji">❤️</span>
+                            <span>公益链路(项目/捐赠)</span>
+                        </div>
+                    </div>
+                    <div class="task-row">
+                        <div class="task-label">
+                            <span class="emoji">💼</span>
+                            <span>创业者链路(项目/审核)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 优化部署组 -->
+                <div class="task-group">
+                    <div class="group-header">优化部署 🛡️</div>
+                    <div class="task-row">
+                        <div class="task-label">
+                            <span class="emoji">🐛</span>
+                            <span>Bug修复&功能完善</span>
+                        </div>
+                    </div>
+                    <div class="task-row">
+                        <div class="task-label">
+                            <span class="emoji">🔒</span>
+                            <span>安全加固&性能优化</span>
+                        </div>
+                    </div>
+                    <div class="task-row">
+                        <div class="task-label critical">
+                            <span class="emoji">🔍</span>
+                            <span>预发布检查</span>
+                        </div>
+                    </div>
+                    <div class="task-row">
+                        <div class="task-label critical">
+                            <span class="emoji">🚀</span>
+                            <span>正式上线</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="timeline-area">
+                <div class="timeline-header">
+                    <div class="date-cell">2/20<br>周四</div>
+                    <div class="date-cell">2/21<br>周五</div>
+                    <div class="date-cell weekend">2/22<br>周六</div>
+                    <div class="date-cell weekend today">2/23<br>周日</div>
+                    <div class="date-cell">2/24<br>周一</div>
+                    <div class="date-cell">2/25<br>周二</div>
+                    <div class="date-cell">2/26<br>周三</div>
+                    <div class="date-cell">2/27<br>周四</div>
+                    <div class="date-cell">2/28<br>周五</div>
+                    <div class="date-cell weekend">3/1<br>周六</div>
+                    <div class="date-cell launch weekend">3/2<br>周日</div>
+                </div>
+                
+                <!-- 上线日期红色虚线 -->
+                <div class="launch-line" style="left: calc(100% - 9.09%);"></div>
+                
+                <div style="position: relative; height: calc(100% - 50px);">
+                    <!-- 网格线 -->
+                    <div class="timeline-grid">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                    
+                    <!-- CEO任务条 -->
+                    <div class="task-bar ceo" style="top: 40px; left: 0%; width: 72.7%; height: 18px;">CEO持续推进 👑</div>
+                    <div class="task-bar ceo" style="top: 72px; left: 18.2%; width: 36.4%; height: 18px;">钱包设置</div>
+                    <div class="task-bar ceo" style="top: 104px; left: 36.4%; width: 27.3%; height: 18px;">TGE决策</div>
+                    <div class="task-bar ceo" style="top: 136px; left: 54.5%; width: 18.2%; height: 18px;">文档审核</div>
+                    
+                    <!-- 核心开发任务条 -->
+                    <div class="task-bar completed critical" style="top: 200px; left: 0%; width: 18.2%; height: 18px;">✅ 启动</div>
+                    <div class="task-bar in-progress critical" style="top: 232px; left: 9.1%; width: 27.3%; height: 18px;">⚠️ 前端开发</div>
+                    <div class="task-bar in-progress critical" style="top: 264px; left: 9.1%; width: 27.3%; height: 18px;">⚠️ 后端API</div>
+                    <div class="task-bar in-progress critical" style="top: 296px; left: 18.2%; width: 18.2%; height: 18px;">🧪 QA中</div>
+                    
+                    <!-- 用户功能任务条 -->
+                    <div class="task-bar completed" style="top: 360px; left: 0%; width: 45.5%; height: 18px;">✅ 学生功能(13/15)</div>
+                    <div class="task-bar in-progress" style="top: 392px; left: 0%; width: 36.4%; height: 18px;">⚠️ 老师功能(7/9)</div>
+                    <div class="task-bar in-progress" style="top: 424px; left: 9.1%; width: 45.5%; height: 18px;">⚠️ 公益功能(3/5)</div>
+                    <div class="task-bar pending" style="top: 456px; left: 27.3%; width: 45.5%; height: 18px;">🔵 创业者功能(1/5)</div>
+                    
+                    <!-- 优化部署任务条 -->
+                    <div class="task-bar pending" style="top: 520px; left: 27.3%; width: 27.3%; height: 18px;">🔵 Bug修复</div>
+                    <div class="task-bar pending" style="top: 552px; left: 54.5%; width: 27.3%; height: 18px;">🔵 安全优化</div>
+                    <div class="task-bar pending critical" style="top: 584px; left: 81.8%; width: 9.1%; height: 18px;">🔍 预检</div>
+                    <div class="task-bar pending critical" style="top: 616px; left: 90.9%; width: 9.1%; height: 18px;">🚀 上线</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <h3>图例说明</h3>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(45deg, #4caf50, #66bb6a);"></div>
+                <span>✅ 已完成</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(45deg, #ff9800, #ffb74d);"></div>
+                <span>⚠️ 执行中</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(45deg, #2196f3, #64b5f6);"></div>
+                <span>🔵 待启动</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(45deg, #ffc107, #ffdb4d);"></div>
+                <span>👑 CEO任务</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="border: 2px solid #f44336; background: transparent;"></div>
+                <span>🔴 关键路径</span>
+            </div>
+            <div class="legend-item">
+                <div style="width: 20px; height: 2px; background: repeating-linear-gradient(to right, #f44336 0px, #f44336 3px, transparent 3px, transparent 6px);"></div>
+                <span>🔴 上线日</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 添加交互效果
+        document.querySelectorAll('.task-bar').forEach(bar => {
+            bar.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05)';
+                this.style.zIndex = '5';
+                this.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
+            });
+            
+            bar.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+                this.style.zIndex = '2';
+                this.style.boxShadow = 'none';
+            });
+        });
+        
+        // 高亮今日任务
+        const today = new Date();
+        const todayString = '2/23'; // 根据当前日期
+        console.log(`今日是 ${todayString}，重点关注QA任务进展`);
+    </script>
+</body>
+</html>

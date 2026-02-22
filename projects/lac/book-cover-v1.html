@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一人十机：2026未来创业实战指南 - 封面设计方案</title>
+    <style>
+        :root {
+            --lac-blue: #007bff;
+            --lac-purple: #6f42c1;
+            --lac-pink: #e83e8c;
+            --bg-dark: #0a0a12;
+            --text-light: #ffffff;
+            --card-width: 400px;
+            --card-height: 640px; /* 1:1.6 ratio */
+        }
+
+        body {
+            background-color: #1a1a1a;
+            color: #eee;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+
+        h1 {
+            margin-bottom: 40px;
+            font-weight: 300;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 60px;
+            justify-content: center;
+            max-width: 1400px;
+        }
+
+        .design-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .cover-card {
+            width: var(--card-width);
+            height: var(--card-height);
+            background-color: var(--bg-dark);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border-radius: 4px; /* Hardcover feel */
+            transition: transform 0.3s ease;
+        }
+
+        .cover-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+        }
+
+        .concept-note {
+            max-width: var(--card-width);
+            text-align: center;
+            color: #aaa;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .concept-title {
+            color: var(--lac-pink);
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        /* --- Common Elements --- */
+        .title {
+            position: relative;
+            z-index: 10;
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+        
+        .subtitle {
+            position: relative;
+            z-index: 10;
+            font-weight: 400;
+        }
+
+        .author {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255,255,255,0.7);
+            z-index: 10;
+            letter-spacing: 1px;
+        }
+
+        /* --- Design A: The Constellation (Star Network) --- */
+        #cover-a {
+            background: radial-gradient(circle at 50% 30%, #1a1a2e 0%, #050508 100%);
+        }
+
+        #cover-a .network-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,0.1) 0%, transparent 100%),
+                radial-gradient(1px 1px at 150px 150px, rgba(255,255,255,0.1) 0%, transparent 100%);
+            background-size: 200px 200px;
+        }
+
+        #cover-a .silhouette {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 180px;
+            background: linear-gradient(to top, #000 10%, rgba(111, 66, 193, 0.8) 100%);
+            border-radius: 60px 60px 0 0;
+            z-index: 5;
+            filter: blur(1px);
+        }
+
+        #cover-a .core-nodes {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+        }
+
+        #cover-a .node {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 0 10px var(--lac-blue);
+        }
+        
+        /* Positioning nodes in a circle/orbit */
+        #cover-a .node:nth-child(1) { top: 10%; left: 50%; box-shadow: 0 0 15px var(--lac-pink); }
+        #cover-a .node:nth-child(2) { top: 25%; left: 80%; box-shadow: 0 0 15px var(--lac-purple); }
+        #cover-a .node:nth-child(3) { top: 55%; left: 90%; }
+        #cover-a .node:nth-child(4) { top: 80%; left: 70%; }
+        #cover-a .node:nth-child(5) { top: 90%; left: 40%; }
+        #cover-a .node:nth-child(6) { top: 80%; left: 15%; }
+        #cover-a .node:nth-child(7) { top: 50%; left: 5%; box-shadow: 0 0 15px var(--lac-blue); }
+        #cover-a .node:nth-child(8) { top: 25%; left: 15%; }
+        #cover-a .node:nth-child(9) { top: 40%; left: 30%; width: 4px; height: 4px; opacity: 0.6; } /* Inner */
+        #cover-a .node:nth-child(10) { top: 60%; left: 65%; width: 4px; height: 4px; opacity: 0.6; } /* Inner */
+
+        #cover-a .lines {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            /* SVG lines simulation via gradient borders is hard, using simpler CSS shapes or just abstract */
+            /* Using radial gradients to simulate glow connecting center */
+            background: radial-gradient(circle at 50% 60%, rgba(111, 66, 193, 0.2) 0%, transparent 60%);
+        }
+
+        #cover-a .title-group {
+            position: absolute;
+            top: 15%;
+            width: 100%;
+            text-align: center;
+        }
+
+        #cover-a .title {
+            font-size: 64px;
+            background: linear-gradient(135deg, #fff 0%, var(--lac-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0,123,255,0.3);
+            margin: 0;
+        }
+
+        #cover-a .subtitle {
+            font-size: 16px;
+            color: #ccc;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* --- Design B: The Energy Core (Cyberpunk Minimal) --- */
+        #cover-b {
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px;
+            box-sizing: border-box;
+            border: 1px solid #222;
+        }
+
+        #cover-b .top-text {
+            border-bottom: 2px solid var(--lac-purple);
+            padding-bottom: 20px;
+        }
+
+        #cover-b .title {
+            font-size: 56px;
+            color: #fff;
+            margin: 0;
+            line-height: 1;
+        }
+
+        #cover-b .subtitle {
+            font-size: 14px;
+            color: var(--lac-pink);
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        #cover-b .visual-center {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* The 10 agents as a ring */
+        #cover-b .ring {
+            width: 220px;
+            height: 220px;
+            border: 1px dashed rgba(255,255,255,0.2);
+            border-radius: 50%;
+            position: absolute;
+            animation: spin 20s linear infinite;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        #cover-b .agent-dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--lac-blue);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--lac-blue);
+            top: 50%; left: 50%;
+            margin: -6px;
+        }
+        /* Distribute dots on circle using transforms */
+        #cover-b .agent-dot:nth-child(1) { transform: rotate(0deg) translate(110px) rotate(0deg); background: var(--lac-pink); box-shadow: 0 0 15px var(--lac-pink); }
+        #cover-b .agent-dot:nth-child(2) { transform: rotate(36deg) translate(110px) rotate(-36deg); }
+        #cover-b .agent-dot:nth-child(3) { transform: rotate(72deg) translate(110px) rotate(-72deg); }
+        #cover-b .agent-dot:nth-child(4) { transform: rotate(108deg) translate(110px) rotate(-108deg); }
+        #cover-b .agent-dot:nth-child(5) { transform: rotate(144deg) translate(110px) rotate(-144deg); background: var(--lac-purple); box-shadow: 0 0 15px var(--lac-purple);}
+        #cover-b .agent-dot:nth-child(6) { transform: rotate(180deg) translate(110px) rotate(-180deg); }
+        #cover-b .agent-dot:nth-child(7) { transform: rotate(216deg) translate(110px) rotate(-216deg); }
+        #cover-b .agent-dot:nth-child(8) { transform: rotate(252deg) translate(110px) rotate(-252deg); }
+        #cover-b .agent-dot:nth-child(9) { transform: rotate(288deg) translate(110px) rotate(-288deg); background: var(--lac-blue); box-shadow: 0 0 15px var(--lac-blue);}
+        #cover-b .agent-dot:nth-child(10) { transform: rotate(324deg) translate(110px) rotate(-324deg); }
+
+        #cover-b .human-core {
+            width: 60px;
+            height: 60px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(255,255,255,0.5);
+            z-index: 10;
+        }
+
+        #cover-b .tagline {
+            font-size: 12px;
+            color: #666;
+            text-align: right;
+            border-top: 1px solid #333;
+            padding-top: 10px;
+        }
+
+        /* --- Design C: The Ascension (Modern Gradient) --- */
+        #cover-c {
+            background: linear-gradient(180deg, #120a1f 0%, #1f0f33 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 80px;
+        }
+
+        #cover-c .glow-bg {
+            position: absolute;
+            bottom: -100px;
+            width: 100%;
+            height: 400px;
+            background: radial-gradient(circle at 50% 100%, rgba(232, 62, 140, 0.4) 0%, rgba(111, 66, 193, 0.2) 50%, transparent 80%);
+            z-index: 1;
+        }
+
+        #cover-c .title {
+            font-size: 72px;
+            background: linear-gradient(to right, #fff, #ddd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            z-index: 10;
+        }
+        
+        #cover-c .subtitle {
+            font-size: 18px;
+            background: linear-gradient(to right, var(--lac-blue), var(--lac-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            margin-top: 10px;
+            letter-spacing: 1px;
+            z-index: 10;
+        }
+
+        #cover-c .formation {
+            margin-top: 80px;
+            position: relative;
+            width: 300px;
+            height: 300px;
+            z-index: 5;
+        }
+
+        /* A "V" formation of lights */
+        .v-formation {
+            position: absolute;
+            width: 10px; height: 10px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(255,255,255,0.8);
+        }
+        
+        /* Leader */
+        #cover-c .v-formation:nth-child(1) { bottom: 20px; left: 50%; transform: translateX(-50%) scale(1.5); background: var(--lac-pink); box-shadow: 0 0 30px var(--lac-pink); }
+        
+        /* Wings */
+        #cover-c .v-formation:nth-child(2) { bottom: 60px; left: 35%; opacity: 0.9; }
+        #cover-c .v-formation:nth-child(3) { bottom: 60px; right: 35%; opacity: 0.9; }
+        
+        #cover-c .v-formation:nth-child(4) { bottom: 100px; left: 25%; opacity: 0.8; background: var(--lac-purple); }
+        #cover-c .v-formation:nth-child(5) { bottom: 100px; right: 25%; opacity: 0.8; background: var(--lac-purple); }
+        
+        #cover-c .v-formation:nth-child(6) { bottom: 140px; left: 15%; opacity: 0.7; }
+        #cover-c .v-formation:nth-child(7) { bottom: 140px; right: 15%; opacity: 0.7; }
+        
+        #cover-c .v-formation:nth-child(8) { bottom: 180px; left: 5%; opacity: 0.6; background: var(--lac-blue); }
+        #cover-c .v-formation:nth-child(9) { bottom: 180px; right: 5%; opacity: 0.6; background: var(--lac-blue); }
+        
+        #cover-c .v-formation:nth-child(10) { bottom: 220px; left: 0%; opacity: 0.4; transform: scale(0.8); }
+        #cover-c .v-formation:nth-child(11) { bottom: 220px; right: 0%; opacity: 0.4; transform: scale(0.8); } /* 11th dot? No, make center human separate */
+
+        #cover-c .human-silhouette-c {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(to top, #000, rgba(0,0,0,0));
+            z-index: 4;
+        }
+
+        #cover-c .author {
+            color: rgba(255,255,255,0.5);
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>《一人十机》封面设计提案</h1>
+
+    <div class="container">
+        
+        <!-- Design A -->
+        <div class="design-wrapper">
+            <div id="cover-a" class="cover-card">
+                <div class="network-bg"></div>
+                
+                <div class="title-group">
+                    <h2 class="title">一人十机</h2>
+                    <div class="subtitle">2026未来创业实战指南</div>
+                </div>
+
+                <div class="core-nodes">
+                    <div class="lines"></div>
+                    <div class="node"></div><div class="node"></div><div class="node"></div><div class="node"></div><div class="node"></div>
+                    <div class="node"></div><div class="node"></div><div class="node"></div><div class="node"></div><div class="node"></div>
+                </div>
+                
+                <div class="silhouette"></div>
+                
+                <div class="author">小嘀嗒 · 蜂群内置智能蜂群</div>
+            </div>
+            <div class="concept-note">
+                <span class="concept-title">方案 A：星群网络 (The Network)</span>
+                强调「连接与赋能」。以深邃宇宙为背景，10个光点如同星座般环绕，既像是在保护中心的创业者，又像是由他发出的能量网络。配色偏深沉科技风，稳重专业。
+            </div>
+        </div>
+
+        <!-- Design B -->
+        <div class="design-wrapper">
+            <div id="cover-b" class="cover-card">
+                <div class="top-text">
+                    <h2 class="title">一人<br>十机</h2>
+                    <div class="subtitle">2026未来创业实战指南</div>
+                </div>
+
+                <div class="visual-center">
+                    <div class="ring">
+                        <div class="agent-dot"></div><div class="agent-dot"></div><div class="agent-dot"></div><div class="agent-dot"></div><div class="agent-dot"></div>
+                        <div class="agent-dot"></div><div class="agent-dot"></div><div class="agent-dot"></div><div class="agent-dot"></div><div class="agent-dot"></div>
+                    </div>
+                    <div class="human-core"></div>
+                </div>
+
+                <div class="tagline">
+                    一个人 + 十个AI = 一支创业军团
+                </div>
+                
+                <div class="author" style="position: relative; bottom: 0; margin-top: 20px; text-align: left;">
+                    小嘀嗒 · 蜂群内置智能蜂群
+                </div>
+            </div>
+            <div class="concept-note">
+                <span class="concept-title">方案 B：核心反应堆 (The Core)</span>
+                极简工业风/赛博朋克风。将"一人十机"具象化为一个能量反应堆。人类是核心，AI是外围高速运转的电子。排版大胆采用大字号断行，视觉冲击力强，适合小图浏览。
+            </div>
+        </div>
+
+        <!-- Design C -->
+        <div class="design-wrapper">
+            <div id="cover-c" class="cover-card">
+                <div class="glow-bg"></div>
+                
+                <h2 class="title">一人<span style="color:var(--lac-pink)">十</span>机</h2>
+                <div class="subtitle">2026未来创业实战指南</div>
+
+                <div class="formation">
+                    <!-- The Human (Bottom Center Leader/Base) -->
+                    <!-- 10 AI Agents in V-formation above/around -->
+                    <div class="v-formation"></div> <!-- Center Top or Bottom? Let's make it ascending -->
+                    <div class="v-formation"></div><div class="v-formation"></div>
+                    <div class="v-formation"></div><div class="v-formation"></div>
+                    <div class="v-formation"></div><div class="v-formation"></div>
+                    <div class="v-formation"></div><div class="v-formation"></div>
+                    <div class="v-formation"></div> <!-- 10 dots total -->
+                    
+                    <div class="human-silhouette-c"></div>
+                </div>
+
+                <div class="author">小嘀嗒 · 蜂群内置智能蜂群</div>
+            </div>
+            <div class="concept-note">
+                <span class="concept-title">方案 C：破晓飞升 (The Ascension)</span>
+                强调「成长与爱」。使用LAC品牌色的全渐变（蓝紫粉），画面温暖且充满希望。光点排列成向上的V字形（雁阵效应），象征一人带队，集体飞升。视觉最柔和，最符合"Love AI"理念。
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+{
+  "name": "lac-backend",
+  "version": "1.0.0",
+  "description": "LAC (Love AI Coin) Backend - Supabase项目",
+  "main": "index.js",
+  "scripts": {
+    "dev": "supabase start",
+    "stop": "supabase stop",
+    "reset": "supabase db reset",
+    "migrations": "supabase migration list",
+    "generate-types": "supabase gen types typescript --local > types/supabase.ts",
+    "deploy": "supabase db push"
+  },
+  "keywords": [
+    "LAC",
+    "Love AI Coin",
+    "Supabase",
+    "PostgreSQL",
+    "Edge Functions",
+    "Mining",
+    "AI",
+    "Blockchain"
+  ],
+  "author": "小小技 🔨",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "version": 1,
+  "skills": {
+    "video-agent": {
+      "version": "1.2.1",
+      "installedAt": 1770723984973
+    },
+    "mux-video": {
+      "version": "1.0.0",
+      "installedAt": 1770723994704
+    },
+    "vhs-recorder": {
+      "version": "1.0.0",
+      "installedAt": 1770723996800
+    },
+    "video-cog": {
+      "version": "1.0.2",
+      "installedAt": 1770723998824
+    },
+    "notion-skill": {
+      "version": "1.0.0",
+      "installedAt": 1771130377457
+    },
+    "self-improving-agent": {
+      "version": "1.0.5",
+      "installedAt": 1771429740854
+    },
+    "nano-banana-pro": {
+      "version": "1.0.1",
+      "installedAt": 1771431063652
+    },
+    "marketing-strategy-pmm": {
+      "version": "1.0.0",
+      "installedAt": 1771431487806
+    },
+    "social-media-scheduler": {
+      "version": "1.0.0",
+      "installedAt": 1771431962642
+    },
+    "afrexai-social-media-engine": {
+      "version": "1.0.0",
+      "installedAt": 1771431601646
+    },
+    "tiktok-viral-marketing": {
+      "version": "0.1.0",
+      "installedAt": 1771431665562
+    },
+    "tiktok-video-analyzer": {
+      "version": "1.0.0",
+      "installedAt": 1771431728138
+    },
+    "marketing-mode": {
+      "version": "1.0.0",
+      "installedAt": 1771431920435
+    },
+    "upload-post": {
+      "version": "1.0.0",
+      "installedAt": 1771431976663
+    },
+    "humanize-zh": {
+      "version": "1.0.0",
+      "installedAt": 1771432035119
+    },
+    "deep-research-pro": {
+      "version": "1.0.2",
+      "installedAt": 1771432093917
+    },
+    "md-to-pdf": {
+      "version": "1.0.0",
+      "installedAt": 1771432107741
+    },
+    "pdf-text-extractor": {
+      "version": "1.0.0",
+      "installedAt": 1771432146873
+    },
+    "planning-with-files": {
+      "version": "1.2.0",
+      "installedAt": 1771432161006
+    },
+    "openclaw-token-save": {
+      "version": "1.0.0",
+      "installedAt": 1771432201094
+    },
+    "youtube-transcript": {
+      "version": "1.0.1",
+      "installedAt": 1771432214654
+    },
+    "aoi-openclaw-security-toolkit-core": {
+      "version": "0.1.6",
+      "installedAt": 1771432271796
+    },
+    "aoi-cron-ops-lite": {
+      "version": "0.1.0",
+      "installedAt": 1771432285925
+    },
+    "crypto-whale-monitor": {
+      "version": "1.0.3",
+      "installedAt": 1771432327071
+    },
+    "onchain": {
+      "version": "0.3.0",
+      "installedAt": 1771432341145
+    },
+    "mac-tts": {
+      "version": "1.0.0",
+      "installedAt": 1771432380329
+    },
+    "stock-analysis": {
+      "version": "6.2.0",
+      "installedAt": 1771432398433
+    },
+    "seo-competitor-analysis": {
+      "version": "1.0.0",
+      "installedAt": 1771432448847
+    }
+  }
+}
