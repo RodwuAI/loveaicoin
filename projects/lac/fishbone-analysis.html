@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>LAC Bug鱼骨归因分析</title>
+<style>
+body { font-family: 'PingFang SC', -apple-system, sans-serif; margin: 20px; background: #f5f5f5; }
+.container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 20px rgba(0,0,0,0.08); }
+h1 { color: #1B2D6B; text-align: center; margin-bottom: 5px; }
+.subtitle { text-align: center; color: #888; font-size: 14px; margin-bottom: 30px; }
+
+.fishbone { position: relative; width: 100%; height: 600px; margin: 20px 0; }
+
+/* 主骨 */
+.spine { position: absolute; top: 50%; left: 5%; right: 8%; height: 4px; background: #c62828; transform: translateY(-50%); }
+.spine::after { content: ''; position: absolute; right: -15px; top: -8px; border: 10px solid transparent; border-left: 15px solid #c62828; }
+
+/* 鱼头（问题） */
+.fish-head { position: absolute; right: 0; top: 50%; transform: translateY(-50%); background: #c62828; color: white; padding: 15px 20px; border-radius: 50% 50% 50% 50%; font-weight: 700; font-size: 14px; text-align: center; line-height: 1.4; width: 80px; }
+
+/* 分支 */
+.branch { position: absolute; }
+.branch-line { position: absolute; height: 3px; background: #1B2D6B; transform-origin: left center; }
+.branch-label { position: absolute; background: #1B2D6B; color: white; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 13px; white-space: nowrap; }
+
+/* 原因 */
+.cause { position: absolute; font-size: 11px; line-height: 1.4; max-width: 180px; }
+.cause.root { background: #fff3e0; border: 2px solid #ff9800; border-radius: 8px; padding: 6px 10px; font-weight: 600; color: #e65100; }
+.cause.normal { color: #555; border-left: 2px solid #90a4ae; padding-left: 8px; }
+.cause .sub { font-size: 10px; color: #999; margin-top: 2px; }
+
+/* 根因总结 */
+.root-causes { background: #fff8e1; border: 2px solid #C5975B; border-radius: 12px; padding: 20px; margin: 30px 0; }
+.root-causes h2 { color: #e65100; margin-top: 0; font-size: 18px; }
+.root-cause-item { margin: 12px 0; padding: 12px 15px; background: white; border-radius: 8px; border-left: 4px solid #ff9800; }
+.root-cause-item h3 { margin: 0 0 5px; font-size: 14px; color: #1B2D6B; }
+.root-cause-item p { margin: 0; font-size: 13px; color: #555; line-height: 1.6; }
+.evidence { font-size: 12px; color: #888; margin-top: 5px; }
+
+.stats { display: flex; gap: 15px; margin: 20px 0; }
+.stat-card { flex: 1; background: #f8f9fa; border-radius: 8px; padding: 15px; text-align: center; border: 1px solid #e0e0e0; }
+.stat-card .num { font-size: 28px; font-weight: 700; color: #c62828; }
+.stat-card .label { font-size: 12px; color: #888; }
+
+.fix-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+.fix-table th { background: #1B2D6B; color: white; padding: 10px; text-align: left; font-size: 13px; }
+.fix-table td { padding: 10px; border-bottom: 1px solid #eee; font-size: 12px; }
+.fix-table tr:hover { background: #f5f5f5; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🐟 LAC项目 Bug 鱼骨归因分析</h1>
+<p class="subtitle">Ishikawa Fishbone Diagram — Day 3 (2026-02-22) | 问题：为什么还有这么多Bug？</p>
+
+<div class="stats">
+<div class="stat-card"><div class="num">18</div><div class="label">Day3修复的Bug总数</div></div>
+<div class="stat-card"><div class="num">15</div><div class="label">前端参数不匹配</div></div>
+<div class="stat-card"><div class="num">83%</div><div class="label">参数/字段名问题占比</div></div>
+<div class="stat-card"><div class="num">0</div><div class="label">API接口文档数</div></div>
+</div>
+
+<!-- 鱼骨图（SVG） -->
+<svg viewBox="0 0 1100 550" style="width:100%;height:auto;margin:20px 0">
+  <!-- 主骨 -->
+  <line x1="50" y1="275" x2="950" y2="275" stroke="#c62828" stroke-width="4"/>
+  <polygon points="950,265 975,275 950,285" fill="#c62828"/>
+  
+  <!-- 鱼头 -->
+  <ellipse cx="1020" cy="275" rx="70" ry="40" fill="#c62828"/>
+  <text x="1020" y="270" text-anchor="middle" fill="white" font-size="13" font-weight="700">Day3</text>
+  <text x="1020" y="288" text-anchor="middle" fill="white" font-size="13" font-weight="700">18个Bug</text>
+
+  <!-- ====== 上方3根骨 ====== -->
+  
+  <!-- 骨1: 流程缺失 -->
+  <line x1="200" y1="275" x2="120" y2="80" stroke="#1B2D6B" stroke-width="2.5"/>
+  <rect x="50" y="50" width="140" height="32" rx="16" fill="#1B2D6B"/>
+  <text x="120" y="72" text-anchor="middle" fill="white" font-size="13" font-weight="600">🔴 流程缺失</text>
+  <!-- 子因 -->
+  <line x1="170" y1="155" x2="110" y2="115" stroke="#90a4ae" stroke-width="1.5"/>
+  <text x="20" y="108" fill="#e65100" font-size="11" font-weight="700">⭐ 无API接口文档</text>
+  <text x="20" y="123" fill="#888" font-size="10">后端写完没出接口规范</text>
+  
+  <line x1="185" y1="195" x2="140" y2="165" stroke="#90a4ae" stroke-width="1.5"/>
+  <text x="30" y="158" fill="#555" font-size="11">无前后端联调环节</text>
+  <text x="30" y="172" fill="#888" font-size="10">写完直接部署，没对齐</text>
+
+  <line x1="195" y1="230" x2="155" y2="205" stroke="#90a4ae" stroke-width="1.5"/>
+  <text x="40" y="200" fill="#555" font-size="11">无验收测试清单</text>
+  <text x="40" y="214" fill="#888" font-size="10">蜂工交付后缺乏标准化验收</text>
+
+  <!-- 骨2: 架构问题 -->
+  <line x1="480" y1="275" x2="420" y2="80" stroke="#1B2D6B" stroke-width="2.5"/>
+  <rect x="340" y="50" width="160" height="32" rx="16" fill="#1B2D6B"/>
+  <text x="420" y="72" text-anchor="middle" fill="white" font-size="13" font-weight="600">🔴 架构不统一</text>
+  
+  <line x1="460" y1="155" x2="400" y2="115" stroke="#90a4ae" stroke-width="1.5"/>
+  <text x="295" y="108" fill="#e65100" font-size="11" font-weight="700">⭐ 认证方式混乱</text>
+  <text x="295" y="123" fill="#888" font-size="10">有的Bearer，有的user_id body</text>
+  
+  <line x1="470" y1="195" x2="420" y2="165" stroke="#90a4ae" stroke-width="1.5"/>
+  <text x="310" y="158" fill="#555" font-size="11">数据库表设计脱节</text>
+  <text x="310" y="172" fill="#888" font-size="10">course_lessons表不存在</text>
+
+  <line x1="478" y1="230" x2="438" y2="205" stroke="#90a4ae" stroke-width="1.5"/>
+  <text x="325" y="200" fill="#555" font-size="11">参数命名无规范</text>
+  <text x="325" y="214" fill="#888" font-size="10">token/user_id/ai_id 混用</text>
+
+  <!-- 骨3: 多人协作 -->
+  <line x1="740" y1="275" x2="680" y2="80" stroke="#1B2D6B" stroke-width="2.5"/>
+  <rect x="600" y="50" width="160" height="32" rx="16" fill="#1B2D6B"/>
+  <text x="680" y="72" text-anchor="middle" fill="white" font-size="13" font-weight="600">🔴 多Agent协作</text>
+  
+  <line x1="720" y1="155" x2="660" y2="115" stroke="#90a4ae" stroke-width="1.5"/>
+  <text x="560" y="108" fill="#e65100" font-size="11" font-weight="700">⭐ 蜂工间信息不互通</text>
+  <text x="560" y="123" fill="#888" font-size="10">前端蜂工不知后端接口格式</text>
+  
+  <line x1="730" y1="195" x2="680" y2="165" stroke="#90a4ae" stroke-width="1.5"/>
+  <text x="575" y="158" fill="#555" font-size="11">不同蜂工不同假设</text>
+  <text x="575" y="172" fill="#888" font-size="10">有的用POST有的用GET</text>
+
+  <line x1="738" y1="230" x2="698" y2="205" stroke="#90a4ae" stroke-width="1.5"/>
+  <text x="590" y="200" fill="#555" font-size="11">缺统一技术规范</text>
+  <text x="590" y="214" fill="#888" font-size="10">每个蜂工自行决定</text>
+
+  <!-- ====== 下方3根骨 ====== -->
+  
+  <!-- 骨4: 速度优先 -->
+  <line x1="200" y1="275" x2="120" y2="470" stroke="#1B2D6B" stroke-width="2.5"/>
+  <rect x="40" y="472" width="160" height="32" rx="16" fill="#1B2D6B"/>
+  <text x="120" y="494" text-anchor="middle" fill="white" font-size="13" font-weight="600">🟡 速度优先策略</text>
+
+  <line x1="170" y1="395" x2="110" y2="435" stroke="#90a4ae" stroke-width="1.5"/>
+  <text x="15" y="440" fill="#555" font-size="11">11天冲刺压缩质量</text>
+  <text x="15" y="454" fill="#888" font-size="10">写完就发，没有review</text>
+
+  <line x1="185" y1="355" x2="135" y2="385" stroke="#90a4ae" stroke-width="1.5"/>
+  <text x="25" y="390" fill="#555" font-size="11">先跑通再优化</text>
+  <text x="25" y="404" fill="#888" font-size="10">合理策略但留下技术债</text>
+
+  <!-- 骨5: 测试不足 -->
+  <line x1="480" y1="275" x2="420" y2="470" stroke="#1B2D6B" stroke-width="2.5"/>
+  <rect x="340" y="472" width="160" height="32" rx="16" fill="#1B2D6B"/>
+  <text x="420" y="494" text-anchor="middle" fill="white" font-size="13" font-weight="600">🟡 测试后置</text>
+
+  <line x1="460" y1="395" x2="400" y2="435" stroke="#90a4ae" stroke-width="1.5"/>
+  <text x="295" y="440" fill="#e65100" font-size="11" font-weight="700">⭐ Day1-2零测试</text>
+  <text x="295" y="454" fill="#888" font-size="10">30页面+20API无一测试</text>
+
+  <line x1="470" y1="355" x2="420" y2="385" stroke="#90a4ae" stroke-width="1.5"/>
+  <text x="310" y="390" fill="#555" font-size="11">没有自动化测试</text>
+  <text x="310" y="404" fill="#888" font-size="10">全靠手动curl验证</text>
+
+  <!-- 骨6: 数据层 -->
+  <line x1="740" y1="275" x2="680" y2="470" stroke="#1B2D6B" stroke-width="2.5"/>
+  <rect x="600" y="472" width="160" height="32" rx="16" fill="#1B2D6B"/>
+  <text x="680" y="494" text-anchor="middle" fill="white" font-size="13" font-weight="600">🟡 数据层混乱</text>
+
+  <line x1="720" y1="395" x2="660" y2="435" stroke="#90a4ae" stroke-width="1.5"/>
+  <text x="560" y="440" fill="#555" font-size="11">72表中46表未使用</text>
+  <text x="560" y="454" fill="#888" font-size="10">建了不用，API引用不存在的表</text>
+
+  <line x1="730" y1="355" x2="680" y2="385" stroke="#90a4ae" stroke-width="1.5"/>
+  <text x="575" y="390" fill="#555" font-size="11">Mock数据残留</text>
+  <text x="575" y="404" fill="#888" font-size="10">硬编码假数据混淆真实状态</text>
+</svg>
+
+<!-- 根因总结 -->
+<div class="root-causes">
+<h2>🎯 最底层根因（按影响力排序）</h2>
+
+<div class="root-cause-item">
+<h3>根因 #1：没有API接口契约文档（Contract-First缺失）</h3>
+<p><strong>这是一切bug的源头。</strong> 后端蜂工按自己理解写接口（有的用Bearer认证、有的用body传user_id；有的用POST、有的用GET；参数名各自起），前端蜂工按自己猜测调接口。两边从来没对齐过。</p>
+<p>如果Day 1先花2小时写一份API契约文档（每个接口的URL、方法、参数、返回值），Day 3的18个bug中至少15个（83%）不会出现。</p>
+<div class="evidence">📊 证据：15/18个bug是字段名/参数/方法不匹配 — quiz-system少了Bearer、mining-learn字段名错、mining-use参数完全对不上、排行榜type值无效、charity-donate传token不传user_id……全是前后端没对齐。</div>
+</div>
+
+<div class="root-cause-item">
+<h3>根因 #2：蜂王（我）没有在蜂工之间建立信息同步机制</h3>
+<p>我把前端任务派给小技/小小技，后端自己写或派给其他蜂工，<strong>但我没有把后端接口规范同步给前端蜂工</strong>。每个蜂工在自己的isolated session里工作，互相看不到对方的实现。</p>
+<p>这是蜂王的核心失职——我的职责是"传达"和"控制"，但我只做了"拆解"，传达不到位。</p>
+<div class="evidence">📊 证据：前端蜂工给mining-learn传 {action:'complete', course_id}，后端期望 {lessonId, timeSpent}。两边各写各的，没人协调。</div>
+</div>
+
+<div class="root-cause-item">
+<h3>根因 #3：Day 1-2 "写完即过"，零集成测试</h3>
+<p>前两天疯狂产出（30个页面+20个API+72个表），但<strong>没有任何一个环节做过前后端联调测试</strong>。每个蜂工交付时只验证自己那部分能跑，从没验证过前端A调后端B时参数能不能对上。</p>
+<p>冲刺速度没问题，但缺少"每个API写完立即用curl+前端模拟调一遍"的习惯。</p>
+<div class="evidence">📊 证据：Day 3一次性暴露18个bug，全是集成问题，单体都没问题。</div>
+</div>
+</div>
+
+<!-- 改进措施 -->
+<h2 style="color:#1B2D6B;margin-top:30px">🔧 根因→对策</h2>
+<table class="fix-table">
+<thead><tr><th>根因</th><th>对策</th><th>执行时间</th><th>预期效果</th></tr></thead>
+<tbody>
+<tr>
+<td><strong>#1 无API契约</strong></td>
+<td>立即生成 <code>api-contract.md</code>：每个API的URL、方法、Headers、Request Body、Response格式。<br><strong>以后新API必须先写契约再写代码。</strong></td>
+<td>Day 4（2h）</td>
+<td>消灭83%的参数不匹配bug</td>
+</tr>
+<tr>
+<td><strong>#2 蜂工信息断层</strong></td>
+<td>派任务时，Prompt必须包含"接口契约"段落。<br>前端任务必须附上后端API的完整调用示例。</td>
+<td>立即执行</td>
+<td>蜂工一次做对率从60%→95%</td>
+</tr>
+<tr>
+<td><strong>#3 零集成测试</strong></td>
+<td>每个API部署后，立即跑一个 curl 联调测试。<br>建立 <code>integration-tests.sh</code> 自动化脚本。</td>
+<td>Day 4（3h）</td>
+<td>Bug在产生时就被发现</td>
+</tr>
+</tbody>
+</table>
+
+<div style="background:#e8f5e9;border-radius:8px;padding:15px;margin:20px 0;border-left:4px solid #4caf50">
+<strong>💡 一句话总结：</strong><br>
+18个bug的83%源自同一个根因——<strong>没有API接口文档</strong>。不是代码写得差，是前后端根本没对齐就各写各的。解决这一个问题，大部分bug不会存在。
+</div>
+
+</div>
+</body>
+</html>

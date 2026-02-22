@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoveAICoin 项目甘特图 V3.0</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=PingFang+SC:wght@300;400;500;600;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'PingFang SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .gantt-container {
+            width: 420mm;
+            height: 297mm;
+            background: white;
+            margin: 0 auto;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .version-info {
+            text-align: right;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .progress-overview {
+            position: absolute;
+            top: 70px;
+            right: 30px;
+            background: rgba(255,255,255,0.95);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 10;
+            min-width: 220px;
+        }
+        
+        .progress-overview h3 {
+            color: #2c3e50;
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .user-progress {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .user-progress .label {
+            font-size: 11px;
+            color: #555;
+            min-width: 60px;
+        }
+        
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 0 8px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+            border-radius: 3px;
+        }
+        
+        .progress-fill.completed { background: #27ae60; }
+        .progress-fill.warning { background: #f39c12; }
+        
+        .progress-text {
+            font-size: 10px;
+            font-weight: 500;
+            color: #666;
+            min-width: 40px;
+            text-align: right;
+        }
+        
+        .stats-summary {
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 10px;
+            color: #666;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        .task-list {
+            width: 380px;
+            flex-shrink: 0;
+        }
+        
+        .department {
+            margin-bottom: 15px;
+        }
+        
+        .department-header {
+            background: linear-gradient(135deg, #34495e 0%, #7f8c8d 100%);
+            color: white;
+            padding: 8px 15px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 15px;
+            border-left: 4px solid;
+            margin-bottom: 2px;
+            border-radius: 0 4px 4px 0;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .task-item:hover {
+            transform: translateX(3px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .task-item.completed {
+            border-left-color: #27ae60;
+            background: linear-gradient(90deg, rgba(39, 174, 96, 0.1) 0%, rgba(255,255,255,0) 100%);
+        }
+        
+        .task-item.in-progress {
+            border-left-color: #f39c12;
+            background: linear-gradient(90deg, rgba(243, 156, 18, 0.1) 0%, rgba(255,255,255,0) 100%);
+        }
+        
+        .task-item.pending {
+            border-left-color: #3498db;
+            background: linear-gradient(90deg, rgba(52, 152, 219, 0.1) 0%, rgba(255,255,255,0) 100%);
+        }
+        
+        .task-item.ceo-task {
+            border-left-color: #f1c40f;
+            background: linear-gradient(90deg, rgba(241, 196, 15, 0.2) 0%, rgba(255,255,255,0) 100%);
+        }
+        
+        .task-item.ceo-task .task-id::after {
+            content: '👑';
+            margin-left: 4px;
+            font-size: 10px;
+        }
+        
+        .task-id {
+            font-size: 10px;
+            font-weight: 600;
+            color: #666;
+            min-width: 35px;
+            margin-right: 8px;
+        }
+        
+        .task-name {
+            flex: 1;
+            font-size: 11px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        .task-assignee {
+            margin-left: 8px;
+            font-size: 12px;
+        }
+        
+        .task-status {
+            margin-left: 6px;
+            font-size: 9px;
+        }
+        
+        .gantt-chart {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .timeline-header {
+            display: flex;
+            background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%);
+            padding: 10px 0;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .timeline-day {
+            flex: 1;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+            padding: 5px;
+            position: relative;
+        }
+        
+        .timeline-day.today {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .timeline-day.launch-date {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border-radius: 4px;
+            border: 2px dashed #ffffff;
+        }
+        
+        .timeline-day .date {
+            display: block;
+            font-size: 8px;
+            opacity: 0.8;
+        }
+        
+        .timeline-body {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .department-gantt {
+            margin-bottom: 15px;
+        }
+        
+        .department-gantt-header {
+            height: 32px;
+        }
+        
+        .task-gantt {
+            display: flex;
+            height: 24px;
+            margin-bottom: 2px;
+            align-items: center;
+        }
+        
+        .task-bar {
+            height: 12px;
+            border-radius: 6px;
+            position: relative;
+            margin: 0 2px;
+            transition: all 0.3s ease;
+        }
+        
+        .task-bar.completed {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            box-shadow: 0 2px 4px rgba(46, 204, 113, 0.3);
+        }
+        
+        .task-bar.in-progress {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            box-shadow: 0 2px 4px rgba(230, 126, 34, 0.3);
+        }
+        
+        .task-bar.pending {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            box-shadow: 0 2px 4px rgba(41, 128, 185, 0.3);
+        }
+        
+        .task-bar.ceo-task {
+            background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+            box-shadow: 0 2px 4px rgba(241, 196, 15, 0.4);
+        }
+        
+        .task-bar:hover {
+            transform: scaleY(1.5);
+            z-index: 5;
+        }
+        
+        .critical-path {
+            position: absolute;
+            top: 50%;
+            height: 3px;
+            background: #e74c3c;
+            border-radius: 2px;
+            transform: translateY(-50%);
+            box-shadow: 0 1px 3px rgba(231, 76, 60, 0.5);
+        }
+        
+        .legend {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 2px solid #dee2e6;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 11px;
+            color: #495057;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 10px;
+            border-radius: 5px;
+            margin-right: 6px;
+        }
+        
+        .legend-color.completed { background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); }
+        .legend-color.in-progress { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); }
+        .legend-color.pending { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+        .legend-color.ceo-task { background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%); }
+        .legend-color.critical { background: #e74c3c; height: 3px; }
+        .legend-color.today { background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); }
+        
+        @media print {
+            body { padding: 0; background: white; }
+            .gantt-container { box-shadow: none; border-radius: 0; }
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="gantt-container">
+        <div class="header">
+            <h1>🪙 LoveAICoin 项目甘特图 V3.0</h1>
+            <div class="version-info">
+                <div>基于V2.1迭代，更新于2/22 11:00</div>
+                <div>62个任务 | A3横道图</div>
+            </div>
+        </div>
+        
+        <div class="progress-overview">
+            <h3>📊 四类用户链路进度</h3>
+            <div class="user-progress">
+                <span class="label">学生</span>
+                <div class="progress-bar">
+                    <div class="progress-fill completed" style="width: 93.3%"></div>
+                </div>
+                <span class="progress-text">14/15✅</span>
+            </div>
+            <div class="user-progress">
+                <span class="label">老师</span>
+                <div class="progress-bar">
+                    <div class="progress-fill warning" style="width: 77.8%"></div>
+                </div>
+                <span class="progress-text">7/9⚠️</span>
+            </div>
+            <div class="user-progress">
+                <span class="label">公益</span>
+                <div class="progress-bar">
+                    <div class="progress-fill warning" style="width: 80%"></div>
+                </div>
+                <span class="progress-text">4/5⚠️</span>
+            </div>
+            <div class="user-progress">
+                <span class="label">创业</span>
+                <div class="progress-bar">
+                    <div class="progress-fill warning" style="width: 60%"></div>
+                </div>
+                <span class="progress-text">3/5⚠️</span>
+            </div>
+            <div class="stats-summary">
+                <div>总API: 21/21已部署</div>
+                <div>总页面: 30+</div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="task-list">
+                <div class="department">
+                    <div class="department-header">🏗️ 基础设施</div>
+                    <div class="task-item completed">
+                        <span class="task-id">T001</span>
+                        <span class="task-name">GitHub仓库创建</span>
+                        <span class="task-assignee">💻</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item ceo-task completed">
+                        <span class="task-id">T002</span>
+                        <span class="task-name">CEO付款：域名购买</span>
+                        <span class="task-assignee">👑</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T003</span>
+                        <span class="task-name">蜂工配置：Vercel部署+SSL</span>
+                        <span class="task-assignee">🔨</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T004</span>
+                        <span class="task-name">Supabase项目创建</span>
+                        <span class="task-assignee">💻</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T054</span>
+                        <span class="task-name">GitHub密钥清理+推送</span>
+                        <span class="task-assignee">💫</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                </div>
+
+                <div class="department">
+                    <div class="department-header">🌐 前端开发</div>
+                    <div class="task-item completed">
+                        <span class="task-id">T005</span>
+                        <span class="task-name">首页开发</span>
+                        <span class="task-assignee">🔨</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T006</span>
+                        <span class="task-name">关于页开发</span>
+                        <span class="task-assignee">🔨</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T007</span>
+                        <span class="task-name">白皮书页开发</span>
+                        <span class="task-assignee">🔨</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T013</span>
+                        <span class="task-name">视觉优化+响应式修复</span>
+                        <span class="task-assignee">💻</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T019</span>
+                        <span class="task-name">钱包连接功能开发</span>
+                        <span class="task-assignee">💻</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T020</span>
+                        <span class="task-name">课程详情页+500课程导入</span>
+                        <span class="task-assignee">🔨</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T021</span>
+                        <span class="task-name">SEO优化+meta标签+sitemap</span>
+                        <span class="task-assignee">🔨</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T022</span>
+                        <span class="task-name">安全Headers+CSP</span>
+                        <span class="task-assignee">💫</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T059</span>
+                        <span class="task-name">JWT→httpOnly Cookie迁移</span>
+                        <span class="task-assignee">💻</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T060</span>
+                        <span class="task-name">性能优化(图片/懒加载/缓存)</span>
+                        <span class="task-assignee">💻</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                </div>
+
+                <div class="department">
+                    <div class="department-header">⚙️ 后端开发</div>
+                    <div class="task-item completed">
+                        <span class="task-id">T008</span>
+                        <span class="task-name">auth-email API开发</span>
+                        <span class="task-assignee">💻</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T009</span>
+                        <span class="task-name">mining-checkin API开发</span>
+                        <span class="task-assignee">💻</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T018</span>
+                        <span class="task-name">Supabase Edge Functions全量部署</span>
+                        <span class="task-assignee">💫</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T051</span>
+                        <span class="task-name">startup-project API(创业者)</span>
+                        <span class="task-assignee">💫</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T052</span>
+                        <span class="task-name">教学佣金机制(teacher commission)</span>
+                        <span class="task-assignee">💫</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item in-progress">
+                        <span class="task-id">T055</span>
+                        <span class="task-name">content-submit RPC修复</span>
+                        <span class="task-assignee">💻</span>
+                        <span class="task-status">🔄</span>
+                    </div>
+                </div>
+
+                <div class="department">
+                    <div class="department-header">⛓️ 区块链/Web3</div>
+                    <div class="task-item completed">
+                        <span class="task-id">T010</span>
+                        <span class="task-name">SPL Token创建脚本</span>
+                        <span class="task-assignee">🦅</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item ceo-task pending">
+                        <span class="task-id">T027</span>
+                        <span class="task-name">CEO创建：Solana钱包</span>
+                        <span class="task-assignee">👑</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item ceo-task pending">
+                        <span class="task-id">T037</span>
+                        <span class="task-name">CEO创建：多签钱包部署</span>
+                        <span class="task-assignee">👑</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T038</span>
+                        <span class="task-name">蜂工配置：多签钱包设置</span>
+                        <span class="task-assignee">🦅</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                </div>
+
+                <div class="department">
+                    <div class="department-header">📝 内容与运营</div>
+                    <div class="task-item completed">
+                        <span class="task-id">T011</span>
+                        <span class="task-name">30天内容日历制定</span>
+                        <span class="task-assignee">✍️</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T012</span>
+                        <span class="task-name">白皮书V2撰写</span>
+                        <span class="task-assignee">✍️</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T014</span>
+                        <span class="task-name">内容审查与优化</span>
+                        <span class="task-assignee">✍️</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item ceo-task pending">
+                        <span class="task-id">T016</span>
+                        <span class="task-name">CEO注册验证：Twitter官方账号</span>
+                        <span class="task-assignee">👑</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T017</span>
+                        <span class="task-name">蜂工配置运营：Twitter内容设置</span>
+                        <span class="task-assignee">💰</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item ceo-task pending">
+                        <span class="task-id">T023</span>
+                        <span class="task-name">CEO注册验证：Discord服务器</span>
+                        <span class="task-assignee">👑</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T024</span>
+                        <span class="task-name">蜂工配置运营：Discord频道规划</span>
+                        <span class="task-assignee">💰</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item ceo-task pending">
+                        <span class="task-id">T025</span>
+                        <span class="task-name">CEO注册验证：Telegram社区群</span>
+                        <span class="task-assignee">👑</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T026</span>
+                        <span class="task-name">蜂工配置运营：Telegram群管理</span>
+                        <span class="task-assignee">💰</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T041</span>
+                        <span class="task-name">预热内容制作</span>
+                        <span class="task-assignee">✍️</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T049</span>
+                        <span class="task-name">上线日社交媒体发布</span>
+                        <span class="task-assignee">💰</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T053</span>
+                        <span class="task-name">种子数据(治理提案+公益项目)</span>
+                        <span class="task-assignee">💫</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T056</span>
+                        <span class="task-name">100门课程内容</span>
+                        <span class="task-assignee">✍️</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T062</span>
+                        <span class="task-name">剩余400门课程内容</span>
+                        <span class="task-assignee">✍️</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                </div>
+
+                <div class="department">
+                    <div class="department-header">🎨 品牌与设计</div>
+                    <div class="task-item completed">
+                        <span class="task-id">T028</span>
+                        <span class="task-name">Logo设计完成</span>
+                        <span class="task-assignee">🎨</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T031</span>
+                        <span class="task-name">品牌VI系统完成</span>
+                        <span class="task-assignee">🎨</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T036</span>
+                        <span class="task-name">社交媒体视觉素材制作</span>
+                        <span class="task-assignee">🎨</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T057</span>
+                        <span class="task-name">设计/UX审计</span>
+                        <span class="task-assignee">🎨</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                </div>
+
+                <div class="department">
+                    <div class="department-header">🔍 产品设计</div>
+                    <div class="task-item completed">
+                        <span class="task-id">T029</span>
+                        <span class="task-name">用户流程图完成</span>
+                        <span class="task-assignee">💫</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T032</span>
+                        <span class="task-name">核心PRD完成(挖矿逻辑V1)</span>
+                        <span class="task-assignee">💫</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                </div>
+
+                <div class="department">
+                    <div class="department-header">📊 战略与规划</div>
+                    <div class="task-item completed">
+                        <span class="task-id">T015</span>
+                        <span class="task-name">经济模型分析V2</span>
+                        <span class="task-assignee">📊</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item ceo-task pending">
+                        <span class="task-id">T030</span>
+                        <span class="task-name">CEO决策：TGE日期确定</span>
+                        <span class="task-assignee">👑</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T050</span>
+                        <span class="task-name">Phase2规划（TGE准备）</span>
+                        <span class="task-assignee">📊</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                </div>
+
+                <div class="department">
+                    <div class="department-header">⚖️ 法务与合规</div>
+                    <div class="task-item completed">
+                        <span class="task-id">T039</span>
+                        <span class="task-name">用户协议撰写</span>
+                        <span class="task-assignee">✍️</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item completed">
+                        <span class="task-id">T040</span>
+                        <span class="task-name">隐私政策撰写</span>
+                        <span class="task-assignee">✍️</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                </div>
+
+                <div class="department">
+                    <div class="department-header">💰 财务</div>
+                    <div class="task-item ceo-task pending">
+                        <span class="task-id">T034</span>
+                        <span class="task-name">CEO付款：初始资金到位确认</span>
+                        <span class="task-assignee">👑</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T035</span>
+                        <span class="task-name">蜂工记录：资金使用计划</span>
+                        <span class="task-assignee">🧮</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                </div>
+
+                <div class="department">
+                    <div class="department-header">🔒 安全</div>
+                    <div class="task-item pending">
+                        <span class="task-id">T043</span>
+                        <span class="task-name">反女巫系统设计</span>
+                        <span class="task-assignee">🔒</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T045</span>
+                        <span class="task-name">安全审计V2</span>
+                        <span class="task-assignee">🔒</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T046</span>
+                        <span class="task-name">渗透测试</span>
+                        <span class="task-assignee">🔒</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                </div>
+
+                <div class="department">
+                    <div class="department-header">🚀 测试与上线</div>
+                    <div class="task-item completed">
+                        <span class="task-id">T033</span>
+                        <span class="task-name">功能测试计划(全站QA)</span>
+                        <span class="task-assignee">💫</span>
+                        <span class="task-status">✅</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T042</span>
+                        <span class="task-name">内测白名单邀请</span>
+                        <span class="task-assignee">💰</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T044</span>
+                        <span class="task-name">Bug修复(内测反馈)</span>
+                        <span class="task-assignee">🔨</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item ceo-task pending">
+                        <span class="task-id">T047</span>
+                        <span class="task-name">CEO决策：正式上线确认</span>
+                        <span class="task-assignee">👑</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T048</span>
+                        <span class="task-name">蜂工执行：正式上线部署</span>
+                        <span class="task-assignee">💻</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T058</span>
+                        <span class="task-name">商业/经济/行政/功能审计</span>
+                        <span class="task-assignee">🐝</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                    <div class="task-item pending">
+                        <span class="task-id">T061</span>
+                        <span class="task-name">E2E回归测试(全链路)</span>
+                        <span class="task-assignee">💫💻</span>
+                        <span class="task-status">⏳</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gantt-chart">
+                <div class="timeline-header">
+                    <div class="timeline-day">
+                        <strong>Day 1</strong>
+                        <span class="date">2/20</span>
+                    </div>
+                    <div class="timeline-day">
+                        <strong>Day 2</strong>
+                        <span class="date">2/21</span>
+                    </div>
+                    <div class="timeline-day today">
+                        <strong>Day 3</strong>
+                        <span class="date">2/22</span>
+                    </div>
+                    <div class="timeline-day">
+                        <strong>Day 4</strong>
+                        <span class="date">2/23</span>
+                    </div>
+                    <div class="timeline-day">
+                        <strong>Day 5</strong>
+                        <span class="date">2/24</span>
+                    </div>
+                    <div class="timeline-day">
+                        <strong>Day 6</strong>
+                        <span class="date">2/25</span>
+                    </div>
+                    <div class="timeline-day">
+                        <strong>Day 7</strong>
+                        <span class="date">2/26</span>
+                    </div>
+                    <div class="timeline-day">
+                        <strong>Day 8</strong>
+                        <span class="date">2/27</span>
+                    </div>
+                    <div class="timeline-day">
+                        <strong>Day 9</strong>
+                        <span class="date">2/28</span>
+                    </div>
+                    <div class="timeline-day">
+                        <strong>Day 10</strong>
+                        <span class="date">3/1</span>
+                    </div>
+                    <div class="timeline-day launch-date">
+                        <strong>Day 11</strong>
+                        <span class="date">3/2上线</span>
+                    </div>
+                </div>
+
+                <div class="timeline-body">
+                    <!-- 基础设施 -->
+                    <div class="department-gantt">
+                        <div class="department-gantt-header"></div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 0%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar ceo-task completed" style="flex: 0 0 9.09%; margin-left: 0%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 0%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 0%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                    </div>
+
+                    <!-- 前端开发 -->
+                    <div class="department-gantt">
+                        <div class="department-gantt-header"></div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 18.18%; margin-left: 9.09%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 9.09%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 9.09%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 18.18%; margin-left: 45.45%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 18.18%; margin-left: 54.54%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                    </div>
+
+                    <!-- 后端开发 -->
+                    <div class="department-gantt">
+                        <div class="department-gantt-header"></div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 18.18%; margin-left: 9.09%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 9.09%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar in-progress" style="flex: 0 0 9.09%; margin-left: 27.27%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                    </div>
+
+                    <!-- 区块链/Web3 -->
+                    <div class="department-gantt">
+                        <div class="department-gantt-header"></div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 9.09%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar ceo-task pending" style="flex: 0 0 9.09%; margin-left: 27.27%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar ceo-task pending" style="flex: 0 0 9.09%; margin-left: 45.45%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 9.09%; margin-left: 45.45%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                    </div>
+
+                    <!-- 内容与运营 -->
+                    <div class="department-gantt">
+                        <div class="department-gantt-header"></div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 18.18%; margin-left: 9.09%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 36.36%; margin-left: 9.09%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 18.18%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar ceo-task pending" style="flex: 0 0 9.09%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 9.09%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar ceo-task pending" style="flex: 0 0 9.09%; margin-left: 27.27%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 9.09%; margin-left: 27.27%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar ceo-task pending" style="flex: 0 0 9.09%; margin-left: 27.27%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 9.09%; margin-left: 27.27%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 18.18%; margin-left: 54.54%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 9.09%; margin-left: 90.91%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 18.18%; margin-left: 9.09%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div style="flex: 1"></div>
+                            <div class="task-bar pending" style="flex: 0 0 72.73%; margin-left: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- 品牌与设计 -->
+                    <div class="department-gantt">
+                        <div class="department-gantt-header"></div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 18.18%; margin-left: 27.27%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 27.27%; margin-left: 36.36%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 18.18%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 18.18%; margin-left: 27.27%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                    </div>
+
+                    <!-- 产品设计 -->
+                    <div class="department-gantt">
+                        <div class="department-gantt-header"></div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 18.18%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 27.27%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                    </div>
+
+                    <!-- 战略与规划 -->
+                    <div class="department-gantt">
+                        <div class="department-gantt-header"></div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 27.27%; margin-left: 9.09%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar ceo-task pending" style="flex: 0 0 9.09%; margin-left: 36.36%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 18.18%; margin-left: 81.82%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                    </div>
+
+                    <!-- 法务与合规 -->
+                    <div class="department-gantt">
+                        <div class="department-gantt-header"></div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 18.18%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                    </div>
+
+                    <!-- 财务 -->
+                    <div class="department-gantt">
+                        <div class="department-gantt-header"></div>
+                        <div class="task-gantt">
+                            <div class="task-bar ceo-task pending" style="flex: 0 0 9.09%; margin-left: 45.45%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 9.09%; margin-left: 45.45%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                    </div>
+
+                    <!-- 安全 -->
+                    <div class="department-gantt">
+                        <div class="department-gantt-header"></div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 36.36%; margin-left: 63.64%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 27.27%; margin-left: 72.73%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 18.18%; margin-left: 72.73%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                    </div>
+
+                    <!-- 测试与上线 -->
+                    <div class="department-gantt">
+                        <div class="department-gantt-header"></div>
+                        <div class="task-gantt">
+                            <div class="task-bar completed" style="flex: 0 0 9.09%; margin-left: 18.18%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 9.09%; margin-left: 63.64%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 18.18%; margin-left: 72.73%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar ceo-task pending" style="flex: 0 0 9.09%; margin-left: 90.91%"></div>
+                            <div class="critical-path" style="left: 90.91%; width: 9.09%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 9.09%; margin-left: 90.91%"></div>
+                            <div class="critical-path" style="left: 90.91%; width: 9.09%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 36.36%; margin-left: 36.36%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                        <div class="task-gantt">
+                            <div class="task-bar pending" style="flex: 0 0 27.27%; margin-left: 72.73%"></div>
+                            <div style="flex: 1"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color completed"></div>
+                <span>✅ 已完成</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color in-progress"></div>
+                <span>🔄 执行中</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color pending"></div>
+                <span>⏳ 待启动</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color ceo-task"></div>
+                <span>👑 CEO任务(L1)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color critical"></div>
+                <span>🚨 关键路径</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color today"></div>
+                <span>📅 今天(Day 3)</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        // 悬停效果
+        document.querySelectorAll('.task-item, .task-bar').forEach(item => {
+            item.addEventListener('mouseenter', function(e) {
+                const tooltip = document.getElementById('tooltip');
+                const taskId = this.closest('.task-item') ? 
+                    this.closest('.task-item').querySelector('.task-id').textContent :
+                    'Task Details';
+                tooltip.textContent = `${taskId} - 悬停查看详情`;
+                tooltip.style.opacity = '1';
+            });
+
+            item.addEventListener('mouseleave', function() {
+                const tooltip = document.getElementById('tooltip');
+                tooltip.style.opacity = '0';
+            });
+
+            item.addEventListener('mousemove', function(e) {
+                const tooltip = document.getElementById('tooltip');
+                tooltip.style.left = e.pageX + 10 + 'px';
+                tooltip.style.top = e.pageY - 30 + 'px';
+            });
+        });
+
+        // 打印优化
+        window.addEventListener('beforeprint', function() {
+            document.body.style.padding = '0';
+            document.querySelector('.gantt-container').style.boxShadow = 'none';
+        });
+
+        window.addEventListener('afterprint', function() {
+            document.body.style.padding = '20px';
+            document.querySelector('.gantt-container').style.boxShadow = '0 20px 60px rgba(0,0,0,0.1)';
+        });
+    </script>
+</body>
+</html>

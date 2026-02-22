@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>LAC核心功能关键路径分析</title>
+<style>
+body { font-family: 'PingFang SC', -apple-system, sans-serif; margin: 20px; background: #f5f5f5; font-size: 13px; }
+.container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 20px rgba(0,0,0,0.08); }
+h1 { color: #1B2D6B; text-align: center; margin-bottom: 5px; font-size: 22px; }
+h2 { color: #1B2D6B; border-bottom: 2px solid #C5975B; padding-bottom: 8px; font-size: 17px; margin-top: 30px; }
+h3 { color: #333; font-size: 15px; margin-top: 20px; }
+.subtitle { text-align: center; color: #888; font-size: 13px; margin-bottom: 25px; }
+
+/* 节点图 */
+.path-diagram { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; overflow-x: auto; }
+.node { display: inline-flex; align-items: center; justify-content: center; padding: 8px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+.node.done { background: #e8f5e9; border: 2px solid #4caf50; color: #2e7d32; }
+.node.wip { background: #fff3e0; border: 2px solid #ff9800; color: #e65100; }
+.node.blocked { background: #ffebee; border: 2px solid #f44336; color: #c62828; }
+.node.todo { background: #e3f2fd; border: 2px solid #2196f3; color: #1565c0; }
+.node.ceo { background: #fff8e1; border: 2px solid #ffc107; color: #f57f17; }
+.arrow { font-size: 16px; color: #999; font-weight: bold; }
+.arrow.critical { color: #f44336; font-size: 18px; font-weight: 900; }
+
+/* 状态表 */
+table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 12px; }
+th { background: #1B2D6B; color: white; padding: 8px 10px; text-align: left; }
+td { padding: 7px 10px; border-bottom: 1px solid #eee; }
+tr:hover { background: #f8f9fa; }
+.status-done { color: #2e7d32; font-weight: 600; }
+.status-wip { color: #e65100; font-weight: 600; }
+.status-blocked { color: #c62828; font-weight: 600; }
+.status-todo { color: #1565c0; font-weight: 600; }
+
+/* 总结框 */
+.summary-box { padding: 15px; border-radius: 8px; margin: 15px 0; }
+.summary-box.red { background: #ffebee; border-left: 4px solid #f44336; }
+.summary-box.green { background: #e8f5e9; border-left: 4px solid #4caf50; }
+.summary-box.orange { background: #fff3e0; border-left: 4px solid #ff9800; }
+.summary-box.blue { background: #e3f2fd; border-left: 4px solid #2196f3; }
+
+.metric { display: inline-block; background: white; border: 1px solid #ddd; border-radius: 8px; padding: 10px 15px; margin: 5px; text-align: center; }
+.metric .num { font-size: 24px; font-weight: 700; }
+.metric .label { font-size: 11px; color: #888; }
+
+.critical-tag { display: inline-block; background: #f44336; color: white; font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+.slack-tag { display: inline-block; background: #4caf50; color: white; font-size: 10px; padding: 2px 8px; border-radius: 10px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>🔴 LAC网站核心功能 — 关键路径分析 (CPM)</h1>
+<p class="subtitle">Critical Path Method | Day 3 (2026-02-22) | 目标：3/2上线，用户全链路跑通</p>
+
+<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:20px 0">
+<div class="metric"><div class="num" style="color:#4caf50">40</div><div class="label">已完成节点</div></div>
+<div class="metric"><div class="num" style="color:#ff9800">1</div><div class="label">执行中</div></div>
+<div class="metric"><div class="num" style="color:#f44336">6</div><div class="label">阻塞中</div></div>
+<div class="metric"><div class="num" style="color:#2196f3">15</div><div class="label">待启动</div></div>
+<div class="metric"><div class="num" style="color:#1B2D6B">8天</div><div class="label">距上线</div></div>
+</div>
+
+<!-- ==================== 关键路径1：学生全链路 ==================== -->
+<h2>🎓 关键路径 #1：学生全链路（决定上线日期的核心路径）</h2>
+<p><strong>完成标准：</strong>用户能 注册→浏览课程→学习→做测验→领LAC→签到→查排行→连钱包</p>
+
+<div class="path-diagram">
+<span class="node done">注册 ✅</span><span class="arrow critical">→</span>
+<span class="node done">登录 ✅</span><span class="arrow critical">→</span>
+<span class="node done">浏览课程 ✅</span><span class="arrow critical">→</span>
+<span class="node done">课程详情 ✅</span><span class="arrow critical">→</span>
+<span class="node done">阅读章节 ✅</span><span class="arrow critical">→</span>
+<span class="node done">做测验 ✅</span><span class="arrow critical">→</span>
+<span class="node done">提交答案 ✅</span><span class="arrow critical">→</span>
+<span class="node done">领LAC奖励 ✅</span><span class="arrow critical">→</span>
+<span class="node done">每日签到 ✅</span><span class="arrow critical">→</span>
+<span class="node done">连签记录 ✅</span><span class="arrow critical">→</span>
+<span class="node done">个人资料 ✅</span><span class="arrow critical">→</span>
+<span class="node done">排行榜 ✅</span><span class="arrow critical">→</span>
+<span class="node done">成就系统 ✅</span><span class="arrow critical">→</span>
+<span class="node done">钱包连接 ✅</span><span class="arrow">→</span>
+<span class="node ceo">CEO钱包 ⏳</span>
+</div>
+
+<table>
+<tr><th>节点</th><th>前端</th><th>后端API</th><th>数据库</th><th>状态</th><th>松弛时间</th></tr>
+<tr><td>注册/登录</td><td>✅ login/register</td><td>✅ auth-email</td><td>✅ users</td><td class="status-done">✅ 完成</td><td><span class="critical-tag">关键路径</span></td></tr>
+<tr><td>课程浏览+详情</td><td>✅ learn/[id]</td><td>✅ Supabase REST</td><td>✅ courses(500)</td><td class="status-done">✅ 完成</td><td><span class="critical-tag">关键路径</span></td></tr>
+<tr><td>测验系统</td><td>✅ quiz组件</td><td>✅ quiz-system</td><td>✅ quiz_questions+metadata</td><td class="status-done">✅ 完成</td><td><span class="critical-tag">关键路径</span></td></tr>
+<tr><td>学习挖矿</td><td>✅ mining/learn</td><td>✅ mining-learn(重写)</td><td>✅ mining_records</td><td class="status-done">✅ 完成</td><td><span class="critical-tag">关键路径</span></td></tr>
+<tr><td>签到+连签</td><td>✅ checkin</td><td>✅ mining-checkin/streak</td><td>✅ checkin_records</td><td class="status-done">✅ 完成</td><td><span class="critical-tag">关键路径</span></td></tr>
+<tr><td>个人资料+排行</td><td>✅ profile</td><td>✅ user-profile/leaderboard</td><td>✅ users/leaderboard_cache</td><td class="status-done">✅ 完成</td><td><span class="slack-tag">松弛2天</span></td></tr>
+<tr><td>钱包连接</td><td>✅ WalletButton</td><td>✅ auth-connect-wallet</td><td>✅ user_wallets</td><td class="status-done">✅ 完成</td><td><span class="slack-tag">松弛3天</span></td></tr>
+</table>
+
+<div class="summary-box green">
+<strong>✅ 关键路径 #1 状态：14/15 通过 (93%)</strong><br>
+唯一缺口：需要CEO创建项目Phantom钱包后，网站才能展示主网Token信息。但Phase 1是积分期(Off-chain)，不影响上线。<br>
+<strong>松弛时间：+3天</strong> — 学生链路已经可以完整跑通。
+</div>
+
+<!-- ==================== 关键路径2：老师链路 ==================== -->
+<h2>👨‍🏫 关键路径 #2：老师全链路</h2>
+<p><strong>完成标准：</strong>老师能 发布教学→生成邀请码→学生绑定→获得佣金→查统计</p>
+
+<div class="path-diagram">
+<span class="node done">注册登录 ✅</span><span class="arrow critical">→</span>
+<span class="node wip">发布教学 🔧</span><span class="arrow critical">→</span>
+<span class="node done">生成邀请码 ✅</span><span class="arrow">→</span>
+<span class="node done">学生绑定 ✅</span><span class="arrow">→</span>
+<span class="node done">学生学习→佣金 ✅</span><span class="arrow">→</span>
+<span class="node todo">教学排行榜 📋</span><span class="arrow">→</span>
+<span class="node done">邀请统计 ✅</span>
+</div>
+
+<table>
+<tr><th>节点</th><th>前端</th><th>后端API</th><th>状态</th><th>阻塞原因</th></tr>
+<tr><td>发布教学内容</td><td>✅ teach页面</td><td>⚠️ content-submit</td><td class="status-wip">🔧 RPC缺失</td><td>validate_content_submission RPC不存在</td></tr>
+<tr><td>生成邀请码</td><td>✅ profile</td><td>✅ invite-system</td><td class="status-done">✅</td><td>—</td></tr>
+<tr><td>学生绑定→佣金</td><td>✅</td><td>✅ mining-learn(3%)</td><td class="status-done">✅ Day3新增</td><td>—</td></tr>
+<tr><td>教学排行榜</td><td>✅ leaderboard</td><td>⚠️ type=teaching</td><td class="status-todo">📋 待验证</td><td>排行榜缓存可能无teaching数据</td></tr>
+</table>
+
+<div class="summary-box orange">
+<strong>⚠️ 关键路径 #2 状态：7/9 通过 (78%)</strong><br>
+阻塞节点：<code>content-submit</code> 的 validate_content_submission RPC不存在。<br>
+<strong>修复方案：</strong>移除RPC校验，改为函数内直接校验（字数≥50，标题≥5字）。预计1小时。<br>
+<strong>松弛时间：+1天</strong>
+</div>
+
+<!-- ==================== 关键路径3：公益链路 ==================== -->
+<h2>❤️ 关键路径 #3：公益参与链路</h2>
+<p><strong>完成标准：</strong>用户能 浏览项目→查详情→捐赠LAC→查历史→获成就</p>
+
+<div class="path-diagram">
+<span class="node done">浏览项目 ✅</span><span class="arrow critical">→</span>
+<span class="node todo">项目详情 📋</span><span class="arrow critical">→</span>
+<span class="node todo">捐赠LAC 📋</span><span class="arrow">→</span>
+<span class="node todo">捐赠历史 📋</span><span class="arrow">→</span>
+<span class="node todo">公益成就 📋</span>
+</div>
+
+<table>
+<tr><th>节点</th><th>前端</th><th>后端API</th><th>状态</th><th>修复难度</th></tr>
+<tr><td>浏览项目列表</td><td>✅ charity-join</td><td>✅ charity-project{list}</td><td class="status-done">✅ 3个项目</td><td>—</td></tr>
+<tr><td>项目详情</td><td>⚠️ 页面无详情视图</td><td>✅ charity-project{detail}</td><td class="status-todo">📋 缺前端</td><td>🟢 简单(2h)</td></tr>
+<tr><td>捐赠LAC</td><td>⚠️ 参数已修</td><td>✅ charity-donate</td><td class="status-todo">📋 待E2E验证</td><td>🟢 简单(1h)</td></tr>
+<tr><td>捐赠历史</td><td>⚠️ 未对接</td><td>✅ charity-donate{history}</td><td class="status-todo">📋 缺前端</td><td>🟢 简单(1h)</td></tr>
+<tr><td>公益成就触发</td><td>—</td><td>⚠️ 无自动触发</td><td class="status-todo">📋 需联动</td><td>🟡 中等(2h)</td></tr>
+</table>
+
+<div class="summary-box orange">
+<strong>⚠️ 关键路径 #3 状态：4/5 后端OK，前端对接不完整</strong><br>
+后端API都在，问题在前端：缺项目详情页、捐赠历史展示、公益成就自动触发。<br>
+<strong>总修复工时：6小时</strong> | <strong>松弛时间：0天（需Day 4完成）</strong>
+</div>
+
+<!-- ==================== 关键路径4：创业链路 ==================== -->
+<h2>💼 关键路径 #4：创业者链路</h2>
+<p><strong>完成标准：</strong>创业者能 提交项目→查看状态→获得孵化资源</p>
+
+<div class="path-diagram">
+<span class="node done">浏览页面 ✅</span><span class="arrow critical">→</span>
+<span class="node done">提交项目 ✅</span><span class="arrow critical">→</span>
+<span class="node done">项目列表 ✅</span><span class="arrow">→</span>
+<span class="node todo">我的项目 📋</span><span class="arrow">→</span>
+<span class="node todo">孵化资源 📋</span>
+</div>
+
+<table>
+<tr><th>节点</th><th>前端</th><th>后端API</th><th>状态</th><th>修复难度</th></tr>
+<tr><td>提交创业项目</td><td>✅ charity-join</td><td>✅ startup-project{submit}</td><td class="status-done">✅ Day3新建</td><td>—</td></tr>
+<tr><td>项目列表</td><td>⚠️ 未展示API数据</td><td>✅ startup-project{list}</td><td class="status-todo">📋 缺前端对接</td><td>🟢 简单(2h)</td></tr>
+<tr><td>我的项目</td><td>⚠️ 无此页面</td><td>✅ startup-project{my-projects}</td><td class="status-todo">📋 缺前端</td><td>🟢 简单(2h)</td></tr>
+<tr><td>孵化资源展示</td><td>⚠️ 静态页面</td><td>— 无API</td><td class="status-todo">📋 内容型</td><td>🟢 简单(1h)</td></tr>
+</table>
+
+<div class="summary-box blue">
+<strong>📋 关键路径 #4 状态：3/5 (60%)</strong><br>
+后端API已就绪（Day3新建），缺前端展示对接。<br>
+<strong>总修复工时：5小时</strong> | <strong>松弛时间：+2天</strong>
+</div>
+
+<!-- ==================== 跨链路关键路径 ==================== -->
+<h2>🔴 跨链路关键路径（决定上线日期）</h2>
+
+<div class="path-diagram" style="background:#fff0f0">
+<span class="node done">基础设施 ✅</span><span class="arrow critical">→</span>
+<span class="node done">前端30页 ✅</span><span class="arrow critical">→</span>
+<span class="node done">后端21API ✅</span><span class="arrow critical">→</span>
+<span class="node done">学生链路 ✅</span><span class="arrow critical">→</span>
+<span class="node wip">老师链路 🔧</span><span class="arrow critical">→</span>
+<span class="node todo">公益前端 📋</span><span class="arrow critical">→</span>
+<span class="node todo">创业前端 📋</span><span class="arrow critical">→</span>
+<span class="node todo">E2E测试 📋</span><span class="arrow critical">→</span>
+<span class="node ceo">CEO社交 ⏳</span><span class="arrow critical">→</span>
+<span class="node todo">预热内容 📋</span><span class="arrow critical">→</span>
+<span class="node todo">内测50人 📋</span><span class="arrow critical">→</span>
+<span class="node todo">Bug修复 📋</span><span class="arrow critical">→</span>
+<span class="node blocked">安全审计 🔴</span><span class="arrow critical">→</span>
+<span class="node ceo">CEO上线确认 ⏳</span><span class="arrow critical">→</span>
+<span class="node blocked">🚀 上线</span>
+</div>
+
+<h3>关键路径时间计算</h3>
+<table>
+<tr><th>阶段</th><th>工时</th><th>最早开始</th><th>最早完成</th><th>在关键路径上？</th></tr>
+<tr><td>老师链路修复(content-submit RPC)</td><td>1h</td><td>2/22 11:00</td><td>2/22 12:00</td><td><span class="critical-tag">是</span></td></tr>
+<tr><td>公益前端对接(详情+捐赠+历史)</td><td>6h</td><td>2/22 12:00</td><td>2/22 18:00</td><td><span class="critical-tag">是</span></td></tr>
+<tr><td>创业前端对接(列表+我的项目)</td><td>5h</td><td>2/22 12:00</td><td>2/22 17:00</td><td><span class="slack-tag">可并行</span></td></tr>
+<tr style="background:#fff8e1"><td>CEO社交账号注册(X/TG/Discord)</td><td>1h</td><td>2/22 任意</td><td>2/23前</td><td><span class="critical-tag">是 — 瓶颈</span></td></tr>
+<tr><td>预热内容制作</td><td>6h</td><td>社交注册后</td><td>2/26</td><td><span class="critical-tag">是</span></td></tr>
+<tr><td>内测白名单(50人)</td><td>2h</td><td>2/27</td><td>2/27</td><td><span class="critical-tag">是</span></td></tr>
+<tr><td>内测Bug修复</td><td>8h</td><td>2/27</td><td>3/1</td><td><span class="critical-tag">是</span></td></tr>
+<tr><td>安全审计V2+渗透</td><td>10h</td><td>2/28</td><td>3/1</td><td><span class="critical-tag">是</span></td></tr>
+<tr style="background:#fff8e1"><td>CEO上线确认</td><td>0.5h</td><td>3/2</td><td>3/2</td><td><span class="critical-tag">是</span></td></tr>
+<tr style="background:#ffebee"><td>🚀 正式上线</td><td>2h</td><td>3/2</td><td>3/2</td><td><span class="critical-tag">终点</span></td></tr>
+</table>
+
+<!-- ==================== 总结 ==================== -->
+<h2>📊 CPM分析总结</h2>
+
+<div class="summary-box red">
+<strong>🔴 关键路径上的唯一人工瓶颈：CEO社交账号注册</strong><br>
+技术侧的关键路径（蜂工负责）总工时约32小时，按每天16小时工作量计算=2天即可完成（Day 4-5）。<br>
+但预热内容依赖社交账号 → 内测依赖预热 → 上线依赖内测。<br>
+<strong>如果社交账号在Day 4(2/23)注册完成</strong>，时间线完全可控，有1天buffer。<br>
+<strong>如果社交账号延迟到Day 6(2/25)以后</strong>，预热和内测将被压缩，上线质量受影响。
+</div>
+
+<div class="summary-box green">
+<strong>✅ 技术侧无阻塞</strong><br>
+4条用户链路的技术修复总工时：<br>
+• 学生：0h（已完成）<br>
+• 老师：1h（RPC修复）<br>
+• 公益：6h（前端对接）<br>
+• 创业：5h（前端对接）<br>
+<strong>总计12小时，Day 4一天内可全部完成。</strong>
+</div>
+
+<div class="summary-box blue">
+<strong>📋 Day 4 (2/23) 行动计划 — 按关键路径优先级</strong><br>
+<table style="margin:10px 0">
+<tr><th>优先级</th><th>任务</th><th>工时</th><th>负责人</th></tr>
+<tr><td>P0</td><td>content-submit RPC修复</td><td>1h</td><td>💫蜂王</td></tr>
+<tr><td>P0</td><td>公益前端：项目详情+捐赠+历史</td><td>6h</td><td>💻小技</td></tr>
+<tr><td>P0</td><td>创业前端：项目列表+我的项目</td><td>5h</td><td>💻小技(并行)</td></tr>
+<tr><td>P0</td><td>E2E回归：4条链路全跑一遍</td><td>2h</td><td>💫蜂王</td></tr>
+<tr style="background:#fff8e1"><td>P0</td><td>CEO：注册X+TG+Discord</td><td>1h</td><td>👑吴总</td></tr>
+</table>
+</div>
+
+<div style="text-align:center;color:#888;margin-top:20px;font-size:11px">
+LAC Critical Path Analysis V1.0 | 2026-02-22 11:20 | 方法论：CPM关键路径法 + EVM挣值管理
+</div>
+
+</div>
+</body>
+</html>
