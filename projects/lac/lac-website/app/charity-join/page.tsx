@@ -84,7 +84,7 @@ export default function CharityJoinPage() {
     setDonating(true);
     setDonateError('');
     try {
-      await charityAPI.donate(token, donateProjectId, donateAmount);
+      await charityAPI.donate(userId || "", donateProjectId, donateAmount);
       setDonateSuccess(true);
     } catch (err: any) {
       setDonateError(err.message || '捐赠失败，请稍后重试');

@@ -146,6 +146,44 @@ serve(async (req) => {
           },
           status: 'completed'
         });
+
+      // 教学奖励：如果学生有老师，老师获得3%佣金
+      const { data: teacherRel } = await supabase
+        .from('teacher_student')
+        .select('teacher_id')
+        .eq('student_id', userId)
+        .eq('status', 'active')
+        .single();
+
+      if (teacherRel) {
+        const commission = Math.floor(lacReward * 0.03);
+        if (commission > 0) {
+          const { data: teacher } = await supabase
+            .from('users')
+            .select('lac_balance')
+            .eq('id', teacherRel.teacher_id)
+            .single();
+          if (teacher) {
+            await supabase.from('users').update({
+              lac_balance: parseFloat(teacher.lac_balance || '0') + commission,
+              updated_at: now
+            }).eq('id', teacherRel.teacher_id);
+
+            await supabase.from('mining_records').insert({
+              user_id: teacherRel.teacher_id,
+              mining_type: 'teach',
+              action: 'student_commission',
+              source_id: courseId,
+              source_type: 'course',
+              lac_earned: commission,
+              base_amount: commission,
+              multiplier: 1.0,
+              metadata: { student_id: userId, course_title: course.title },
+              status: 'completed'
+            });
+          }
+        }
+      }
     }
 
     return new Response(

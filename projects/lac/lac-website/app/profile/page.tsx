@@ -161,10 +161,19 @@ export default function ProfilePage() {
       };
 
       fetchSolBalance();
+
+      // Save wallet to backend
+      if (token) {
+        fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/auth-connect-wallet`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ wallet_address: publicKey.toString(), chain: 'solana' })
+        }).catch(() => {});
+      }
     } else {
       setSolBalance(null);
     }
-  }, [connected, publicKey, connection]);
+  }, [connected, publicKey, connection, token]);
 
   // 格式化钱包地址显示
   const formatAddress = (address: string) => {

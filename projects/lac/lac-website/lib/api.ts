@@ -190,8 +190,8 @@ export const achievementAPI = {
 
 // Charity API
 export const charityAPI = {
-  async donate(token: string, projectId: string, amount: number) {
-    return apiCall('charity-donate', { method: 'POST', body: JSON.stringify({ action: 'donate', user_id: token, project_id: projectId, amount }) });
+  async donate(userId: string, projectId: string, amount: number) {
+    return apiCall('charity-donate', { method: 'POST', body: JSON.stringify({ action: 'donate', user_id: userId, project_id: projectId, amount }) });
   },
   async history(userId: string) {
     return apiCall('charity-donate', { method: 'POST', body: JSON.stringify({ action: 'history', user_id: userId }) });
