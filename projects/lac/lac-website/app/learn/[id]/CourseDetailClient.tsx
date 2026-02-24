@@ -7,6 +7,34 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/auth-context';
 import { quizAPI, miningLearnAPI } from '@/lib/api';
 
+// Simple markdown renderer function
+function renderMarkdown(text: string): string {
+  if (!text) return '';
+  
+  return text
+    // Headers
+    .replace(/^### (.*$)/gm, '<h3 class="text-xl font-bold text-navy mb-4 mt-6">$1</h3>')
+    .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-bold text-navy mb-4 mt-8">$1</h2>')
+    .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-bold text-navy mb-6 mt-8">$1</h1>')
+    // Bold and italic
+    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-navy">$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
+    // Code blocks
+    .replace(/```([\s\S]*?)```/g, '<pre class="bg-gray-100 p-4 rounded-lg overflow-x-auto my-4"><code class="text-sm">$1</code></pre>')
+    .replace(/`(.*?)`/g, '<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono">$1</code>')
+    // Lists
+    .replace(/^\* (.*$)/gm, '<li class="ml-4 mb-2">• $1</li>')
+    .replace(/^- (.*$)/gm, '<li class="ml-4 mb-2">• $1</li>')
+    // Links
+    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-gold hover:text-gold-light underline" target="_blank" rel="noopener">$1</a>')
+    // Line breaks
+    .replace(/\n\n/g, '</p><p class="mb-4">')
+    .replace(/\n/g, '<br>')
+    // Wrap in paragraphs
+    .replace(/^(.*)/, '<p class="mb-4">$1')
+    .replace(/(.*$)/, '$1</p>');
+}
+
 const categoryMeta: Record<string, { icon: string; color: string }> = {
   'AI基础入门': { icon: '🤖', color: 'from-purple-500/20 to-indigo-500/20' },
   'Prompt工程': { icon: '💬', color: 'from-emerald-500/20 to-teal-500/20' },
@@ -124,12 +152,16 @@ export default function CourseDetailClient() {
 
     try {
       const quiz = await quizAPI.getQuiz(id, token || undefined);
-      setQuizData(quiz);
-      setShowQuiz(true);
-      setShowingContent(false);
+      if (quiz && quiz.success && quiz.data && quiz.data.questions && quiz.data.questions.length > 0) {
+        setQuizData(quiz.data);
+        setShowQuiz(true);
+        setShowingContent(false);
+      } else {
+        window.__toast?.('该课程暂无测验题目 📝');
+      }
     } catch (error) {
       console.error('Failed to fetch quiz:', error);
-      window.__toast?.('该课程测验即将上线 📝');
+      window.__toast?.('测验加载失败，请稍后重试 📝');
     }
   };
 
@@ -368,33 +400,36 @@ export default function CourseDetailClient() {
 
       {/* Chapter Content Modal */}
       {showingContent && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-4xl max-h-[90vh] overflow-hidden w-full">
-            <div className="p-8">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-hidden">
+          <div className="bg-white rounded-2xl max-w-4xl max-h-[90vh] overflow-hidden w-full flex flex-col">
+            <div className="p-8 flex-1 flex flex-col">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-bold text-navy">
                   第{currentChapter + 1}章：{(course.metadata?.chapter_titles || course.metadata?.chapter_content || [])[currentChapter]}
                 </h3>
-                <button onClick={() => setShowingContent(false)} className="text-gray-400 hover:text-gray-600">
+                <button onClick={() => setShowingContent(false)} className="text-gray-400 hover:text-gray-600 flex-shrink-0">
                   ✕
                 </button>
               </div>
 
-              <div className="max-h-[60vh] overflow-y-auto mb-8">
+              <div className="flex-1 overflow-y-auto mb-8 pr-2">
                 <div className="prose prose-lg max-w-none">
                   {course.metadata?.chapter_content && course.metadata?.chapter_content[currentChapter] ? (
-                    <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                      {typeof course.metadata.chapter_content[currentChapter] === 'string' 
-                        ? course.metadata.chapter_content[currentChapter]
-                        : course.metadata.chapter_content[currentChapter].content || '本章节的详细内容正在准备中。'}
-                    </div>
+                    <div 
+                      className="text-gray-700 leading-relaxed"
+                      dangerouslySetInnerHTML={{
+                        __html: renderMarkdown(typeof course.metadata.chapter_content[currentChapter] === 'string' 
+                          ? course.metadata.chapter_content[currentChapter]
+                          : course.metadata.chapter_content[currentChapter].content || '本章节的详细内容正在准备中。')
+                      }}
+                    />
                   ) : (
                     <p className="text-gray-500">本章节的详细内容正在准备中。请继续阅读下一章节。</p>
                   )}
                 </div>
               </div>
 
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center border-t border-gray-100 pt-6 flex-shrink-0">
                 <span className="text-sm text-gray-500">
                   第 {currentChapter + 1} 章 / 共 {(course.metadata?.chapter_titles || course.metadata?.chapter_content || []).length} 章
                 </span>
@@ -409,9 +444,9 @@ export default function CourseDetailClient() {
 
       {/* Quiz Modal */}
       {showQuiz && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-4xl max-h-[90vh] overflow-hidden w-full">
-            <div className="p-8">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-hidden">
+          <div className="bg-white rounded-2xl max-w-4xl max-h-[90vh] overflow-hidden w-full flex flex-col">
+            <div className="p-8 flex-1 flex flex-col">
               {!quizSubmitted ? (
                 <>
                   <div className="flex items-center justify-between mb-6">
@@ -422,12 +457,12 @@ export default function CourseDetailClient() {
                   </div>
 
                   {quizData && quizData.questions ? (
-                    <div className="max-h-[60vh] overflow-y-auto mb-8">
+                    <div className="flex-1 overflow-y-auto mb-8 pr-2">
                       <div className="space-y-6">
                         {quizData.questions.map((question: any, qIndex: number) => (
                           <div key={qIndex} className="border rounded-xl p-6">
                             <h4 className="font-semibold text-navy mb-4">
-                              {qIndex + 1}. {question.question}
+                              {qIndex + 1}. {question.question_text || question.question}
                             </h4>
                             <div className="space-y-3">
                               {question.options.map((option: string, oIndex: number) => (
@@ -452,13 +487,13 @@ export default function CourseDetailClient() {
                       </div>
                     </div>
                   ) : (
-                    <div className="text-center py-8">
+                    <div className="text-center py-8 flex-1 flex flex-col justify-center">
                       <div className="w-16 h-16 border-4 border-gold/30 border-t-gold rounded-full animate-spin mx-auto mb-4"></div>
                       <div className="text-gray-500">加载测验中...</div>
                     </div>
                   )}
 
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between items-center border-t border-gray-100 pt-6 flex-shrink-0">
                     <span className="text-sm text-gray-500">
                       请完成所有题目
                     </span>
@@ -472,7 +507,7 @@ export default function CourseDetailClient() {
                   </div>
                 </>
               ) : (
-                <div className="text-center py-8">
+                <div className="text-center py-8 flex-1 flex flex-col justify-center">
                   <div className="text-6xl mb-6">
                     {quizResult?.passed ? '🎉' : '😔'}
                   </div>
@@ -480,12 +515,12 @@ export default function CourseDetailClient() {
                     {quizResult?.passed ? '恭喜通过！' : '未通过测验'}
                   </h3>
                   <p className="text-lg text-gray-600 mb-6">
-                    得分：{quizResult?.score || 0}%
+                    得分：{quizResult?.data?.score || 0}%
                   </p>
-                  {quizResult?.passed && (
+                  {quizResult?.data?.passed && (
                     <div className="bg-gold/10 border border-gold/30 rounded-2xl p-6 mb-6">
                       <div className="text-lg font-bold gold-text mb-2">
-                        🏆 获得奖励：{quizResult?.reward || reward} LAC
+                        🏆 获得奖励：{quizResult?.data?.lac_reward || reward} LAC
                       </div>
                       <div className="text-sm text-gray-600">
                         奖励已自动发放到您的账户

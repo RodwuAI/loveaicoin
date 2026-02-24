@@ -49,14 +49,15 @@ export default function ProfilePage() {
 
     const fetchProfile = async () => {
       try {
-        const data = await userProfileAPI.getProfile(token);
-        setUserProfile(data);
+        const response = await userProfileAPI.getProfile(token);
+        const profileData = response.data || response;
+        setUserProfile(profileData);
         
         // 如果有用户ID，获取邀请统计和成就
-        if (data.id) {
-          fetchInviteStats(data.id);
-          fetchAchievements(data.id);
-          fetchInviteCode(data.id);
+        if (profileData.id) {
+          fetchInviteStats(profileData.id);
+          fetchAchievements(profileData.id);
+          fetchInviteCode(profileData.id);
         }
         // Fetch ACP score
         fetchAcpScore();
@@ -180,6 +181,17 @@ export default function ProfilePage() {
     if (!address) return '';
     return `${address.slice(0, 6)}...${address.slice(-6)}`;
   };
+
+  if (authLoading) {
+    return (
+      <section className="pt-32 pb-16 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-gold/30 border-t-gold rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-500">加载中...</p>
+        </div>
+      </section>
+    );
+  }
 
   if (!isLoggedIn) {
     return (

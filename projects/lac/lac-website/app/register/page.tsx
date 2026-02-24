@@ -38,7 +38,7 @@ export default function RegisterPage() {
 
       if (response.ok && data.data?.accessToken) {
         // 使用AuthContext登录
-        login(data.data?.accessToken, data.data?.user?.username || formData.username);
+        login(data.data?.accessToken, data.data?.user?.username || formData.username, data.data?.user?.id);
         // 注册成功，跳转到个人中心
         router.push('/profile');
       } else {

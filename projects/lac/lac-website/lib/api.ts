@@ -276,7 +276,7 @@ export const checkinAPI = {
 // Mining Learn API
 export const miningLearnAPI = {
   async complete(token: string, courseId: string) {
-    return apiCall('mining-learn', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ lessonId: courseId, timeSpent: 30 }) });
+    return apiCall('mining-learn', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ courseId: courseId, timeSpent: 30 }) });
   }
 };
 
@@ -288,7 +288,12 @@ export const quizAPI = {
     return apiCall('quiz-system', { method: 'POST', headers, body: JSON.stringify({ action: 'get-quiz', course_id: courseId }) });
   },
   async submitQuiz(token: string, courseId: string, answers: number[]) {
-    return apiCall('quiz-system', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ action: 'submit', course_id: courseId, answers }) });
+    // Convert answers array to expected format: [{ question_id: string, selected: number }]
+    const formattedAnswers = answers.map((selected, index) => ({
+      question_id: `meta_${index}`,
+      selected: selected
+    }));
+    return apiCall('quiz-system', { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ action: 'submit', course_id: courseId, answers: formattedAnswers, time_spent_seconds: 300 }) });
   }
 };
 
