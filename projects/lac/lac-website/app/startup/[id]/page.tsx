@@ -220,7 +220,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             <div className="lg:pl-12">
               {/* Stats Cards */}
               <div className="grid grid-cols-2 gap-4">
-                {project.stats.map((stat, i) => (
+                {project.stats.map((stat: any, i: number) => (
                   <div key={i} className="card p-6 text-center bg-white/60 backdrop-blur-sm">
                     <div className="text-2xl font-black gold-text mb-1">{stat.value}</div>
                     <div className="text-xs text-gray-500">{stat.label}</div>
@@ -239,7 +239,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             <div className="lg:col-span-2">
               <h2 className="text-3xl font-extrabold text-navy mb-6">项目详情</h2>
               <div className="prose prose-lg max-w-none">
-                {project.fullDesc.split('\n\n').map((paragraph, i) => (
+                {project.fullDesc.split('\n\n').map((paragraph: any, i: number) => (
                   <p key={i} className="text-gray-600 leading-relaxed mb-6">
                     {paragraph}
                   </p>
@@ -251,7 +251,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               <div className="card p-8">
                 <h3 className="text-xl font-bold text-navy mb-4">项目特色</h3>
                 <ul className="space-y-3">
-                  {project.features.map((feature, i) => (
+                  {project.features.map((feature: any, i: number) => (
                     <li key={i} className="flex items-start gap-3 text-sm text-gray-600">
                       <span className="text-gold mt-0.5 flex-shrink-0">●</span>
                       {feature}
@@ -270,10 +270,10 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           <div className="max-w-[1200px] mx-auto px-6">
             <h2 className="text-3xl font-extrabold text-navy text-center mb-12">读者评价</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {project.testimonials.map((testimonial, i) => (
+              {project.testimonials.map((testimonial: any, i: number) => (
                 <div key={i} className="card p-6">
                   <div className="flex items-center gap-1 mb-3">
-                    {[...Array(testimonial.rating)].map((_, j) => (
+                    {[...Array(testimonial.rating)].map((_: any, j: number) => (
                       <span key={j} className="text-gold">⭐</span>
                     ))}
                   </div>
@@ -296,7 +296,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           <div className="max-w-[1200px] mx-auto px-6">
             <h2 className="text-3xl font-extrabold text-navy text-center mb-12">成功案例</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {project.caseStudies.map((case_study, i) => (
+              {project.caseStudies.map((case_study: any, i: number) => (
                 <div key={i} className="card p-6">
                   <div className="text-xs font-semibold text-gold uppercase tracking-wider mb-2">
                     {case_study.industry}
@@ -317,7 +317,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           <div className="max-w-[1200px] mx-auto px-6">
             <h2 className="text-3xl font-extrabold text-navy text-center mb-12">技术规格</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {project.techSpecs.map((spec, i) => (
+              {project.techSpecs.map((spec: any, i: number) => (
                 <div key={i} className="card p-6 text-center">
                   <h3 className="text-sm font-bold text-navy mb-2">{spec.spec}</h3>
                   <p className="text-lg font-semibold gold-text">{spec.value}</p>
@@ -335,7 +335,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
           <p className="text-center text-gray-500 mb-12">选择最适合您的参与方式</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {project.participationWays.map((way, i) => (
+            {project.participationWays.map((way: any, i: number) => (
               <div key={i} className="card p-6 text-center group">
                 <div className="w-16 h-16 rounded-2xl bg-gold/10 flex items-center justify-center text-3xl mx-auto mb-4 group-hover:bg-gold/20 transition-colors">
                   {way.icon}
