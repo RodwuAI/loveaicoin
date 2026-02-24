@@ -150,7 +150,7 @@ export async function generateStaticParams() {
 
 export default async function ProjectDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const project = projects[id as keyof typeof projects];
+  const project = projects[id as keyof typeof projects] as any;
 
   if (!project) {
     notFound();
