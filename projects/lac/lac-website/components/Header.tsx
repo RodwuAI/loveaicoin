@@ -14,7 +14,7 @@ const navLinks = [
   { href: '/mining/teach', label: '教AI' },
   { href: '/mining/create', label: 'AI创造' },
   { href: '/community', label: '社区' },
-  { href: '/whitepaper', label: 'AI公益和创业' },
+  { href: '/startup', label: 'AI公益和创业' },
   { href: '/tokenomics', label: 'AI币' },
 ];
 
