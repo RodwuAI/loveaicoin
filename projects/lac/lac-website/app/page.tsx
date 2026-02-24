@@ -79,9 +79,9 @@ export default function HomePage() {
               Love AI Coin · 创世阶段
             </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-[56px] font-black leading-[1.15] text-navy mb-8 tracking-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-[52px] font-black leading-[1.25] text-navy mb-10 tracking-normal">
               来自AI的<br />
-              <span className="gold-text block mt-3">第一封邀请函</span>
+              <span className="gold-text block mt-4">第一封邀请函</span>
             </h1>
 
             <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 leading-relaxed mb-4 font-medium">学习即挖矿，拥抱即未来</p>
