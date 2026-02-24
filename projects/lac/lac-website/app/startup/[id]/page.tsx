@@ -208,9 +208,9 @@ export default async function ProjectDetailPage({ params }: PageProps) {
               </div>
 
               <div className="flex items-center gap-4 flex-wrap">
-                <button className="btn btn-primary btn-lg">
-                  我要参与 🚀
-                </button>
+                <Link href={id === 'ai-book-1-10' ? '/startup/buy-book' : '#participation'} className="btn btn-primary btn-lg">
+                  {id === 'ai-book-1-10' ? '立即购买 📚' : '我要参与 🚀'}
+                </Link>
                 <Link href="/startup" className="btn btn-secondary btn-lg">
                   返回项目列表
                 </Link>
