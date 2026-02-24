@@ -46,7 +46,7 @@ export default function Header() {
 
         {/* Actions */}
         <div className="hidden md:flex items-center gap-3">
-          <button className="btn btn-ghost btn-sm">中 / EN</button>
+          <button className="btn btn-ghost btn-sm opacity-50 cursor-not-allowed" disabled title="多语言即将上线">中 / EN</button>
           <WalletButton size="sm" />
           {loading ? (
             <div className="w-8 h-8 border-2 border-gold/30 border-t-gold rounded-full animate-spin"></div>
@@ -96,7 +96,7 @@ export default function Header() {
           ))}
           <div className="pt-3 border-t border-[#E8EAF0] space-y-3">
             <div className="flex gap-3 items-center">
-              <button className="btn btn-ghost btn-sm">中 / EN</button>
+              <button className="btn btn-ghost btn-sm opacity-50 cursor-not-allowed" disabled title="多语言即将上线">中 / EN</button>
               <WalletButton size="sm" className="flex-1" />
             </div>
             <div className="flex gap-3 items-center">

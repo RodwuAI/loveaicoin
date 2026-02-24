@@ -200,14 +200,23 @@ export default function CommunityPage() {
                     {ch.statLabel}{' '}
                     <span className="font-semibold text-navy">{ch.stat}</span>
                   </div>
-                  <a
-                    href={ch.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn btn-primary btn-sm w-full"
-                  >
-                    {ch.action}
-                  </a>
+                  {ch.href === '#' ? (
+                    <button
+                      disabled
+                      className="btn btn-primary btn-sm w-full opacity-50 cursor-not-allowed"
+                    >
+                      {ch.action}
+                    </button>
+                  ) : (
+                    <a
+                      href={ch.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-primary btn-sm w-full"
+                    >
+                      {ch.action}
+                    </a>
+                  )}
                 </div>
               </div>
             ))}

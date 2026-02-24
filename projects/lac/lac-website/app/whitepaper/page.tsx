@@ -64,7 +64,7 @@ export default function CharityIncubationPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative pt-[120px] pb-20 bg-gradient-to-b from-white to-surface">
+      <section className="relative pt-[120px] pb-20 bg-gradient-to-b from-white to-surface overflow-x-hidden">
         <div className="absolute -top-[200px] -right-[200px] w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(197,151,91,0.06)_0%,transparent_70%)]" />
         <div className="max-w-[1200px] mx-auto px-6 text-center relative z-10">
           <div className="w-32 h-32 rounded-full bg-gradient-to-br from-gold-pale to-gold/[0.15] border-[3px] border-gold-light flex items-center justify-center text-6xl mx-auto mb-8 animate-float">

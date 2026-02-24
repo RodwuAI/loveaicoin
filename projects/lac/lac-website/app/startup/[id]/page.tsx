@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import ProjectButtons from './ProjectButtons';
 
 // Project data
 const projects = {
@@ -329,7 +330,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
       )}
 
       {/* Participation Ways */}
-      <section className="py-20">
+      <section id="participation" className="py-20">
         <div className="max-w-[1200px] mx-auto px-6">
           <h2 className="text-3xl font-extrabold text-navy text-center mb-4">参与方式</h2>
           <p className="text-center text-gray-500 mb-12">选择最适合您的参与方式</p>
@@ -342,9 +343,13 @@ export default async function ProjectDetailPage({ params }: PageProps) {
                 </div>
                 <h3 className="text-lg font-bold text-navy mb-3">{way.title}</h3>
                 <p className="text-sm text-gray-500 leading-relaxed mb-4">{way.desc}</p>
-                <button className="btn btn-secondary w-full group-hover:border-gold transition-colors">
-                  {way.action}
-                </button>
+                {way.action === '立即购买' ? (
+                  <Link href="/startup/buy-book" className="btn btn-secondary w-full group-hover:border-gold transition-colors">
+                    {way.action}
+                  </Link>
+                ) : (
+                  <ProjectButtons label={way.action} />
+                )}
               </div>
             ))}
           </div>
@@ -359,9 +364,7 @@ export default async function ProjectDetailPage({ params }: PageProps) {
             无论您选择哪种参与方式，我们都期待与您携手推进这个项目。
           </p>
           <div className="flex items-center justify-center gap-4 flex-wrap">
-            <button className="btn btn-primary btn-lg">
-              🚀 我要参与
-            </button>
+            <ProjectButtons label="🚀 我要参与" className="btn btn-primary btn-lg" />
             <Link href="/community" className="btn btn-secondary btn-lg">
               💬 加入社区讨论
             </Link>

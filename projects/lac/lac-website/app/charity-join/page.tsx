@@ -213,12 +213,12 @@ export default function CharityJoinPage() {
                         }`}>{project.status}</span>
                       </div>
                       <h3 className="text-lg font-bold text-navy mb-2">{project.name}</h3>
-                      <p className="text-xs text-gray-400 mb-4">发起人：{project.author}</p>
+                      <p className="text-xs text-gray-400 mb-4">发起人：{project.author || '待公布'}</p>
                       
                       <div className="mb-3">
                         <div className="flex justify-between text-xs text-gray-400 mb-1">
-                          <span>${typeof project.raised === 'number' ? project.raised.toLocaleString() : project.raised}</span>
-                          <span>目标 ${typeof project.goal === 'number' ? project.goal.toLocaleString() : project.goal}</span>
+                          <span>{project.raised != null ? `$${typeof project.raised === 'number' ? project.raised.toLocaleString() : project.raised}` : '--'}</span>
+                          <span>{project.goal != null ? `目标 $${typeof project.goal === 'number' ? project.goal.toLocaleString() : project.goal}` : '目标 待公布'}</span>
                         </div>
                         <div className="h-2 rounded-full bg-[#E8EAF0] overflow-hidden">
                           <div

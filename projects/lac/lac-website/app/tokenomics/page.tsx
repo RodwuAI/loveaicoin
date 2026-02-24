@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 const keyStats = [
   { label: '总供应量', value: '100亿', sub: 'Total Supply', icon: '💰' },
-  { label: '初始价格', value: '$*.**', sub: 'TGE时公布', icon: '💲' },
+  { label: '初始价格', value: '待TGE公布', sub: 'Coming Soon', icon: '💲' },
   { label: '完全稀释估值', value: '$500万', sub: 'FDV*', icon: '📊' },
 ];
 

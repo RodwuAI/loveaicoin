@@ -15,9 +15,25 @@ export default function RegisterPage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<{ username?: string; email?: string; password?: string }>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const errors: { username?: string; email?: string; password?: string } = {};
+    if (!formData.username.trim()) errors.username = '请输入用户名';
+    if (!formData.email.trim()) {
+      errors.email = '请输入邮箱';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = '邮箱格式不正确';
+    }
+    if (!formData.password) {
+      errors.password = '请输入密码';
+    } else if (formData.password.length < 6) {
+      errors.password = '密码至少6位';
+    }
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+
     setLoading(true);
     setError('');
 
@@ -90,14 +106,15 @@ export default function RegisterPage() {
                   type="text"
                   id="username"
                   name="username"
+                  autoComplete="username"
                   value={formData.username}
                   onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 rounded-xl border border-[#E8EAF0] focus:border-gold focus:ring focus:ring-gold/20 outline-none transition-all duration-200"
+                  className={`w-full px-4 py-3 rounded-xl border ${fieldErrors.username ? 'border-red-400' : 'border-[#E8EAF0]'} focus:border-gold focus:ring focus:ring-gold/20 outline-none transition-all duration-200`}
                   placeholder="请输入用户名（2-20个字符）"
                   minLength={2}
                   maxLength={20}
                 />
+                {fieldErrors.username && <p className="text-red-500 text-xs mt-1">{fieldErrors.username}</p>}
               </div>
 
               <div>
@@ -108,12 +125,13 @@ export default function RegisterPage() {
                   type="email"
                   id="email"
                   name="email"
+                  autoComplete="email"
                   value={formData.email}
                   onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 rounded-xl border border-[#E8EAF0] focus:border-gold focus:ring focus:ring-gold/20 outline-none transition-all duration-200"
+                  className={`w-full px-4 py-3 rounded-xl border ${fieldErrors.email ? 'border-red-400' : 'border-[#E8EAF0]'} focus:border-gold focus:ring focus:ring-gold/20 outline-none transition-all duration-200`}
                   placeholder="请输入您的邮箱地址"
                 />
+                {fieldErrors.email && <p className="text-red-500 text-xs mt-1">{fieldErrors.email}</p>}
               </div>
 
               <div>
@@ -124,13 +142,14 @@ export default function RegisterPage() {
                   type="password"
                   id="password"
                   name="password"
+                  autoComplete="new-password"
                   value={formData.password}
                   onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 rounded-xl border border-[#E8EAF0] focus:border-gold focus:ring focus:ring-gold/20 outline-none transition-all duration-200"
+                  className={`w-full px-4 py-3 rounded-xl border ${fieldErrors.password ? 'border-red-400' : 'border-[#E8EAF0]'} focus:border-gold focus:ring focus:ring-gold/20 outline-none transition-all duration-200`}
                   placeholder="请输入密码（至少6位）"
                   minLength={6}
                 />
+                {fieldErrors.password && <p className="text-red-500 text-xs mt-1">{fieldErrors.password}</p>}
                 <div className="text-xs text-gray-400 mt-2">
                   密码至少包含6个字符
                 </div>

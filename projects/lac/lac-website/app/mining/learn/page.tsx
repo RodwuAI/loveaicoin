@@ -37,7 +37,7 @@ export default function LearnMiningPage() {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative pt-[120px] pb-20 bg-gradient-to-b from-white to-surface">
+      <section className="relative pt-[120px] pb-20 bg-gradient-to-b from-white to-surface overflow-x-hidden">
         <div className="absolute -top-[200px] -right-[200px] w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(197,151,91,0.06)_0%,transparent_70%)]" />
         
         <div className="max-w-[1200px] mx-auto px-6 text-center relative z-10">

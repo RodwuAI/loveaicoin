@@ -328,16 +328,21 @@ export default function CourseDetailClient() {
               )}
 
               {/* Prerequisites */}
-              {course.metadata?.prerequisites && course.metadata.prerequisites.length > 0 && (
+              {course.metadata?.prerequisites && Array.isArray(course.metadata.prerequisites) && course.metadata.prerequisites.filter((p: unknown) => typeof p === 'string' && p.trim() && !/^\d+$/.test(p.trim())).length > 0 ? (
                 <div className="card p-8">
                   <h2 className="text-2xl font-bold text-navy mb-6">📋 前置知识</h2>
                   <ul className="space-y-2">
-                    {course.metadata.prerequisites.map((p: string, i: number) => (
+                    {course.metadata.prerequisites.filter((p: unknown) => typeof p === 'string' && p.trim() && !/^\d+$/.test(p.trim())).map((p: string, i: number) => (
                       <li key={i} className="flex items-start gap-3 text-gray-600">
                         <span className="text-navy mt-0.5">•</span>{p}
                       </li>
                     ))}
                   </ul>
+                </div>
+              ) : course.metadata?.prerequisites && (
+                <div className="card p-8">
+                  <h2 className="text-2xl font-bold text-navy mb-6">📋 前置知识</h2>
+                  <p className="text-gray-600">无前置知识要求</p>
                 </div>
               )}
             </div>
