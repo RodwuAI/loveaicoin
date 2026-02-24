@@ -23,9 +23,9 @@ const startupProjects = [
     type: '企业战略转型服务',
     status: '接受申请',
     price: '面议',
-    description: '帮助传统企业进行AI战略转型，帮助创业者用AI搭建一人公司系统，"帮不懂系统的人卖系统"的创新服务模式。',
+    description: '一个人+十个AI Agent，打造完整公司运营体系。帮助企业AI战略转型，赋能个人创业者用AI实现降本增效。',
     goal: '赋能中小企业和个人创业者',
-    icon: '🏢',
+    icon: '🤖',
     gradient: 'from-green-50 to-emerald-50',
     stats: [
       { label: '服务类型', value: '咨询+实施' },
