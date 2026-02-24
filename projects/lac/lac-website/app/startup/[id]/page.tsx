@@ -137,9 +137,7 @@ const projects = {
 };
 
 interface PageProps {
-  params: {
-    id: string
-  }
+  params: Promise<{ id: string }>
 }
 
 export async function generateStaticParams() {
@@ -150,8 +148,9 @@ export async function generateStaticParams() {
   ];
 }
 
-export default function ProjectDetailPage({ params }: PageProps) {
-  const project = projects[params.id as keyof typeof projects];
+export default async function ProjectDetailPage({ params }: PageProps) {
+  const { id } = await params;
+  const project = projects[id as keyof typeof projects];
 
   if (!project) {
     notFound();
