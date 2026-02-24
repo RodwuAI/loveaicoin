@@ -19,7 +19,7 @@ const startupProjects = [
   },
   {
     id: 'one-person-company',
-    title: '一人实际（One-Person Company）企业服务',
+    title: '一人十机（One-Person Company）企业服务',
     type: '企业战略转型服务',
     status: '接受申请',
     price: '面议',
