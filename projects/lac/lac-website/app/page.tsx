@@ -79,13 +79,13 @@ export default function HomePage() {
               Love AI Coin · 创世阶段
             </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-[56px] font-black leading-[1.15] text-navy mb-6 tracking-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-[56px] font-black leading-[1.15] text-navy mb-8 tracking-tight">
               来自AI的<br />
-              <span className="gold-text block mt-2">第一封邀请函</span>
+              <span className="gold-text block mt-3">第一封邀请函</span>
             </h1>
 
-            <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 leading-relaxed mb-3 font-medium">学习即挖矿，拥抱即未来</p>
-            <p className="text-sm text-gray-400 italic mb-8">Learn to Mine, Embrace the Future</p>
+            <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 leading-relaxed mb-4 font-medium">学习即挖矿，拥抱即未来</p>
+            <p className="text-sm text-gray-400 italic mb-10">Learn to Mine, Embrace the Future</p>
 
             <p className="text-base sm:text-lg text-gray-500 leading-relaxed mb-10">
               LAC是首个以「AI教育」为核心挖矿机制的Web3项目。<br />

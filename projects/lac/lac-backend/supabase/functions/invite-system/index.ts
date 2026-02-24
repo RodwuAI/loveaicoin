@@ -80,6 +80,18 @@ serve(async (req) => {
         }
       });
 
+    } else if (action === 'get_code') {
+      const { user_id } = body;
+      if (!user_id) return jsonRes({ error: 'user_id required' }, 400);
+
+      const { data: existing } = await supabase
+        .from('invitations').select('invite_code').eq('inviter_id', user_id).maybeSingle();
+
+      return jsonRes({
+        success: true,
+        invite_code: existing?.invite_code || null
+      });
+
     } else if (action === 'commission') {
       const { student_id, amount } = body;
       if (!student_id || !amount) return jsonRes({ error: 'student_id and amount required' }, 400);

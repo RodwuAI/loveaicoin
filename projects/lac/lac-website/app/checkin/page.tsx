@@ -105,19 +105,21 @@ export default function CheckinPage() {
 
         // Fetch user status and streak data if logged in
         if (token && isLoggedIn) {
-          // Get checkin status
+          // Get checkin status — the backend returns already_checked_in inside data
           const statusResult = await checkinAPI.status(token);
+          const statusData = statusResult.data || statusResult;
           
           // Get streak data
           const streakResult = await checkinAPI.streak(token);
-          setStreakData(streakResult);
+          const streakInfo = streakResult.data || streakResult;
+          setStreakData(streakInfo);
           
           // Check if already submitted today
-          if (statusResult.checked_in_today) {
+          if (statusData.already_checked_in || statusData.checked_in_today) {
             setSubmitted(true);
             setCheckinResult({
-              feedback: '今日已签到',
-              reward: statusResult.today_reward || 10,
+              feedback: statusData.ai_feedback || '今日已签到',
+              reward: statusData.lac_reward || statusData.today_reward || 10,
             });
           }
         }
@@ -132,7 +134,7 @@ export default function CheckinPage() {
   }, [token, isLoggedIn]);
 
   const handleSubmit = async () => {
-    if (!answer.trim() || !token) return;
+    if (!answer.trim() || !token || loading || submitted) return;
     if (answer.trim().length < 10) {
       setCheckinResult({ error: '回答至少需要10个字哦 ✍️' });
       return;
@@ -144,9 +146,10 @@ export default function CheckinPage() {
       const data = await checkinAPI.checkin(token, answer);
 
       if (data.success) {
+        const resultData = data.data || data;
         setCheckinResult({
-          feedback: data.feedback,
-          reward: data.reward || 10,
+          feedback: resultData.ai_feedback || resultData.feedback || '',
+          reward: resultData.lac_reward || resultData.reward || 10,
         });
         setSubmitted(true);
         

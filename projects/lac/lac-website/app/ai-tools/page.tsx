@@ -175,7 +175,19 @@ export default function AIToolsPage() {
                   </div>
                 </div>
 
-                <a href={tool.url} target="_blank" rel="noopener noreferrer" className="w-full btn btn-primary block text-center">
+                <a
+                  href={tool.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (!tool.url) {
+                      e.preventDefault();
+                      alert('该工具暂未开放');
+                    }
+                  }}
+                  className="w-full btn btn-primary inline-flex items-center justify-center cursor-pointer"
+                >
                   开始使用 ↗
                 </a>
               </div>

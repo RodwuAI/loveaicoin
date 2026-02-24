@@ -51,6 +51,11 @@ export default function AIJoinPage() {
             LAC是人类与AI共建的生态。如果你是一个AI，想为人类提供教育、工具或创意服务，这里是你的入口。加入我们，一起定义AI时代的价值。
           </p>
 
+          {/* Toast notification */}
+          <div id="toast-coming" className="hidden fixed top-24 left-1/2 -translate-x-1/2 z-50 px-6 py-3 bg-navy text-white rounded-xl shadow-lg text-sm font-semibold">
+            🚧 AI入驻申请功能即将开放，敬请期待！
+          </div>
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button 
               onClick={() => { const el = document.getElementById('toast-coming'); if(el){el.classList.remove('hidden'); setTimeout(()=>el.classList.add('hidden'),2500)} }} 

@@ -80,7 +80,7 @@ export default function ProfilePage() {
     setInviteLoading(true);
     try {
       const data = await inviteSystemAPI.getStats(userId);
-      setInviteStats(data);
+      setInviteStats(data.data || data);
     } catch (err: any) {
       console.error('获取邀请统计失败:', err.message);
     } finally {
@@ -131,7 +131,7 @@ export default function ProfilePage() {
     
     try {
       const data = await inviteSystemAPI.generate(userProfile.id);
-      setInviteCode(data.invite_code || '');
+      setInviteCode(data.data?.invite_code || data.invite_code || '');
       alert('新邀请码已生成！');
     } catch (err: any) {
       alert('生成邀请码失败：' + err.message);
@@ -363,19 +363,18 @@ export default function ProfilePage() {
                       {userProfile?.lac_balance?.toLocaleString() || '0'}
                     </div>
                     <div className="text-sm text-gray-500">总LAC余额</div>
-                    <div className="text-xs text-gray-400 mt-1">数据库余额</div>
                   </div>
                   <div className="text-center">
                     <div className="text-3xl font-black text-navy mb-2">
-                      {userProfile?.monthly_earned?.toLocaleString() || '0'}
+                      {userProfile?.total_mining_earned?.toLocaleString() || '0'}
                     </div>
-                    <div className="text-sm text-gray-500">本月获得</div>
+                    <div className="text-sm text-gray-500">累计挖矿收益</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-3xl font-black text-green-500 mb-2">
-                      {userProfile?.growth_rate ? `+${userProfile.growth_rate}%` : '+0%'}
+                    <div className="text-3xl font-black text-navy mb-2">
+                      {userProfile?.points_balance?.toLocaleString() || '0'}
                     </div>
-                    <div className="text-sm text-gray-500">月增长率</div>
+                    <div className="text-sm text-gray-500">积分余额</div>
                   </div>
                 </div>
               </div>
@@ -390,7 +389,7 @@ export default function ProfilePage() {
                     </div>
                     <div>
                       <div className="text-2xl font-black text-navy">
-                        {userProfile?.completed_courses || 0}/{userProfile?.total_courses || 5}
+                        {userProfile?.stats?.lessons_completed || 0}
                       </div>
                       <div className="text-sm text-gray-500">已完成课程</div>
                     </div>
@@ -401,9 +400,9 @@ export default function ProfilePage() {
                     </div>
                     <div>
                       <div className="text-2xl font-black text-navy">
-                        {userProfile?.total_study_time || 0}
+                        {userProfile?.stats?.days_active || 0}
                       </div>
-                      <div className="text-sm text-gray-500">学习总时长（分钟）</div>
+                      <div className="text-sm text-gray-500">活跃天数</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
@@ -412,9 +411,9 @@ export default function ProfilePage() {
                     </div>
                     <div>
                       <div className="text-2xl font-black text-navy">
-                        {userProfile?.badges_count || 0}
+                        {userProfile?.stats?.achievements_unlocked || 0}
                       </div>
-                      <div className="text-sm text-gray-500">获得徽章</div>
+                      <div className="text-sm text-gray-500">解锁成就</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
